@@ -8,20 +8,23 @@ const endPoints = {
   testnet: 'https://rinkeby.infura.io/v3/de303f7185894e5a862e7482da6e398d',
 };
 
-console.log('Test');
-console.log(Resolver);
-const web3 = new Web3(new Web3.providers.HttpProvider(endPoints.testnet));
-const ethrResolver = ethr.getResolver();
-const resolver = new Resolver(ethrResolver);
+export default class DIDManager {
+  constructor(privateEthrKey) {
+    this.web3 = new Web3(new Web3.providers.HttpProvider(endPoints.testnet));
+    const ethrResolver = ethr.getResolver();
+    this.resolver = new Resolver(ethrResolver);
+    this.account = this.web3.eth.accounts.privateKeyToAccount(privateEthrKey);
+    this.ethrDid = new EthrDID({
+      provider: this.web3.currentProvider,
+      address: this.account.address,
+    });
+  }
 
-web3.eth.getGasPrice().then(price => console.log(price));
-const account = web3.eth.accounts.privateKeyToAccount(
-  '055625aecdde464cbbe6ef3ee5806ed74eafe57a01523e6a01a6d09b1c626495',
-);
-console.log('Test');
-resolver.resolve('did:ethr:' + account.address).then(doc => console.log(doc));
+  getGasPrice() {
+    return this.web3.eth.getGasPrice();
+  }
 
-ethrDid = new EthrDID({
-  provider: web3.currentProvider,
-  address: account.address,
-});
+  getEthrDidAddress() {
+    return this.resolver.resolve('did:ethr:' + this.account.address);
+  }
+}

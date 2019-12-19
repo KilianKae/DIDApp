@@ -25,9 +25,15 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 import './shim';
 import './global';
-import './did';
+import DidManager from './did';
 
 const App: () => React$Node = () => {
+  const didManager = new DidManager(
+    '055625aecdde464cbbe6ef3ee5806ed74eafe57a01523e6a01a6d09b1c626495',
+  );
+
+  didManager.getEthrDidAddress().then(doc => console.log(doc));
+
   return (
     <>
       <StatusBar barStyle="dark-content" />

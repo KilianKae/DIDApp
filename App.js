@@ -23,6 +23,9 @@ import {
   DebugInstructions,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import './shim';
+import './global';
+import Web3 from 'web3';
 
 const App: () => React$Node = () => {
   return (

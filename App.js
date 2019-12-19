@@ -25,7 +25,7 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 import './shim';
 import './global';
-import Web3 from 'web3';
+import './did';
 
 const App: () => React$Node = () => {
   return (

@@ -4,12 +4,13 @@
   "private": true,
   "scripts": {
     "android": "react-native run-android",
-    "ios": "react-native run-ios",
+    "ios": "rm -rf ios/build| react-native run-ios",
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint ."
   },
   "dependencies": {
+    "@react-native-community/async-storage": "^1.7.1",
     "@tradle/react-native-http": "^2.0.1",
     "assert": "^1.5.0",
     "browserify-zlib": "^0.1.4",
@@ -22,6 +23,7 @@
     "ethr-did-resolver": "^1.0.3",
     "events": "^1.1.1",
     "https-browserify": "0.0.1",
+    "metro": "^0.57.0",
     "native-base": "^2.13.8",
     "node-libs-browser": "^2.2.1",
     "path-browserify": "0.0.0",

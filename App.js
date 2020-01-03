@@ -24,6 +24,13 @@ import {
 import './shim';
 import './global';
 import Did from './DidList';
+import DIDManager from './didManager';
+
+function newEthrDID() {
+  alert('Creating new Ethr DID');
+  didManager = new DIDManager();
+  didManager.newEthrDID();
+}
 
 const App: () => React$Node = () => {
   return (
@@ -39,7 +46,7 @@ const App: () => React$Node = () => {
         </Body>
         <Right>
           <Button transparent>
-            <Icon name="add" />
+            <Icon name="add" onPress={newEthrDID} />
           </Button>
         </Right>
       </Header>

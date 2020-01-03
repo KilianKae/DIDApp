@@ -2,22 +2,26 @@ import AsyncStorage from '@react-native-community/async-storage';
 
 export const saveKeystore = async keystore => {
   try {
-    const keystoreString = JSON.stringify(keystore);
-    await AsyncStorage.setItem('keystore', keystoreString);
+    //TODO error handling
+    let keystores = await getKeystores();
+    keystores.push(keystore);
+    const keystoresString = JSON.stringify(keystores);
+    await AsyncStorage.setItem('keystores', keystoresString);
   } catch (error) {
     // Error retrieving data
     console.log(error.message);
   }
 };
 
-export const getKeystore = async () => {
-  let keystoreString = '';
+//TODO add s
+export const getKeystores = async () => {
+  let keystores = [];
   try {
-    keystoreString = (await AsyncStorage.getItem('keystore')) || '{}';
-    keystore = JSON.parse(keystoreString);
+    let keystoresString = (await AsyncStorage.getItem('keystores')) || '[]';
+    keystores = JSON.parse(keystoresString);
   } catch (error) {
     // Error retrieving data
     console.log(error.message);
   }
-  return keystore;
+  return keystores;
 };

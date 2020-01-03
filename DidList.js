@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Text, List, ListItem, Content} from 'native-base';
+import {Text, List, ListItem} from 'native-base';
 import DIDManager from './didManager';
 
 //TODO
@@ -11,11 +11,20 @@ export default class DidList extends Component {
     super();
     this.didManager = new DIDManager();
     //Testing
-    this.didManager.addEthrAccount(privateEthrKey);
-
+    //this.didManager.addEthrAccountFromPrivateKey(privateEthrKey);
     this.state = {
       dids: this.didManager.getDIDs(),
     };
+    this.testReload = this.testReload.bind(this);
+  }
+
+  //TODO remove
+  testReload() {
+    this.didManager = new DIDManager();
+    console.log('reload', this.didManager.getDIDs());
+    this.setState({
+      dids: this.didManager.getDIDs(),
+    });
   }
 
   createListItems() {
@@ -31,6 +40,15 @@ export default class DidList extends Component {
   }
 
   render() {
-    return <List>{this.createListItems()}</List>;
+    return (
+      <>
+        <List>
+          <ListItem>
+            <Text onPress={this.testReload}>Reload</Text>
+          </ListItem>
+        </List>
+        <List>{this.createListItems()}</List>
+      </>
+    );
   }
 }

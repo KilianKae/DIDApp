@@ -33,6 +33,7 @@
     "react": "16.9.0",
     "react-native": "0.61.5",
     "react-native-crypto": "^2.2.0",
+    "react-native-deep-linking": "^2.2.0",
     "react-native-level-fs": "^3.0.1",
     "react-native-os": "^1.2.6",
     "react-native-randombytes": "^3.5.3",

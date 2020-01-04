@@ -41,9 +41,8 @@ export default class App extends Component {
     Linking.addEventListener('url', this._handleUrl);
     DeepLinking.addScheme('didapp://');
     DeepLinking.addRoute('/login/returnUrl/:returnUrl', response => {
-      // example://test/23
       Linking.openURL(decodeURIComponent(response.returnUrl));
-      console.log('fdddf', response); // 23
+      console.log('[App] Received response: ', response);
     });
   }
   componentWillUnmount() {
@@ -53,7 +52,7 @@ export default class App extends Component {
   }
 
   _handleUrl = ({url}) => {
-    console.log(url);
+    console.log('[App] Handling url: ', url);
     Linking.canOpenURL(url).then(supported => {
       if (supported) {
         DeepLinking.evaluateUrl(url);

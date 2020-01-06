@@ -25,8 +25,16 @@ function newEthrDID() {
 
 export default class DidScreen extends React.Component {
   componentDidMount() {
-    const returnUrl = this.props.navigation.getParam('returnUrl', '');
-    console.log('[HomeScreen] ComponentDidMount with returnUrl: ', returnUrl);
+    const SIOPRequest = {
+      client_id: this.props.navigation.getParam('client_id', ''),
+      scope: this.props.navigation.getParam('scope', ''),
+      request: this.props.navigation.getParam('request', ''),
+    };
+    console.log(
+      '[HomeScreen] ComponentDidMount with SIOPRequest: ',
+      SIOPRequest,
+    );
+    const returnUrl = SIOPRequest.client_id;
     if (returnUrl) {
       Linking.canOpenURL(returnUrl)
         .then(supported => {

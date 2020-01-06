@@ -14,7 +14,10 @@ import {
   Text,
 } from 'native-base';
 
-export default class HomeScreen extends React.Component {
+export default class CredentialsScreen extends React.Component {
+  componentDidMount() {
+    console.log('[HomeScreen] ComponentDidMount with props', this.props);
+  }
   render() {
     return (
       <Container>
@@ -25,18 +28,11 @@ export default class HomeScreen extends React.Component {
             </Button>
           </Left>
           <Body>
-            <Title>Home</Title>
+            <Title>Credentials</Title>
           </Body>
           <Right />
         </Header>
-        <Content>
-          <Button onPress={() => this.props.navigation.navigate('Dids')}>
-            <Text>DIDs</Text>
-          </Button>
-          <Button onPress={() => this.props.navigation.navigate('Credentials')}>
-            <Text>Credentials</Text>
-          </Button>
-        </Content>
+        <Content />
         <Footer>
           <FooterTab>
             <Button full>

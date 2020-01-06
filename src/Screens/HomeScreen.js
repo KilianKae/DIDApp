@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React from 'react';
 import {Linking} from 'react-native';
 import {
   Container,
@@ -14,14 +14,13 @@ import {
   Icon,
   Text,
 } from 'native-base';
-import './shim';
-import './global';
-import Did from './DidList';
-import DIDManager from './didManager';
+
+import Did from '../Components/DidList';
+import DIDManager from '../Utilities/didManager';
 import DeepLinking from 'react-native-deep-linking';
 
 function newEthrDID() {
-  alert('Creating new Ethr DID');
+  console.log('[HomeScreen] Creating new Ethr DID');
   didManager = new DIDManager();
   didManager.newEthrDID();
 }
@@ -32,7 +31,7 @@ export default class HomeScreen extends React.Component {
     DeepLinking.addScheme('didapp://');
     DeepLinking.addRoute('/login/returnUrl/:returnUrl', response => {
       Linking.openURL(decodeURIComponent(response.returnUrl));
-      console.log('[App] Received response: ', response);
+      console.log('[HomeScreen] Received response: ', response);
     });
   }
   componentWillUnmount() {

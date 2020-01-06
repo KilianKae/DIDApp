@@ -13,7 +13,6 @@ export const saveKeystore = async keystore => {
   }
 };
 
-//TODO add s
 export const getKeystores = async () => {
   let keystores = [];
   try {

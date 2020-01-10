@@ -7,46 +7,54 @@ const privateEthrKey =
   '055625aecdde464cbbe6ef3ee5806ed74eafe57a01523e6a01a6d09b1c626495';
 
 export default class DidList extends Component {
+  didManager;
+
   constructor() {
     super();
-    this.didManager = new DIDManager();
-    //Testing
-    //this.didManager.addEthrAccountFromPrivateKey(privateEthrKey);
     this.state = {
-      dids: this.didManager.getDIDs(),
+      dids: [],
+      loading: true,
     };
-    this.testReload = this.testReload.bind(this);
+    this.didManager = new DIDManager(() => this.updateDids());
+    this.updateDids = this.updateDids.bind(this);
   }
 
-  //TODO remove
-  testReload() {
-    this.didManager = new DIDManager();
-    console.log('reload', this.didManager.getDIDs());
+  updateDids() {
+    console.log(
+      'reload',
+      this.didManager.getDids().map(ethrDid => ethrDid.did),
+    );
     this.setState({
-      dids: this.didManager.getDIDs(),
+      dids: this.didManager.getDids(),
+      loading: false,
     });
   }
 
   createListItems() {
     let listItems = [];
-    for (did of this.state.dids) {
+    for (ethrDid of this.state.dids) {
       listItems.push(
-        <ListItem key={did}>
-          <Text>{did}</Text>
+        <ListItem key={ethrDid.did}>
+          <Text onPress={() => ethrDid.generateSiopResponse()}>
+            {ethrDid.did}
+          </Text>
         </ListItem>,
       );
     }
     return listItems;
   }
 
+  //TODO nicer laoding indicator
   render() {
     return (
       <>
-        <List>
-          <ListItem>
-            <Text onPress={this.testReload}>Reload</Text>
-          </ListItem>
-        </List>
+        {this.state.loading ? (
+          <List>
+            <ListItem>
+              <Text onPress={this.updateDids}>Loading...</Text>
+            </ListItem>
+          </List>
+        ) : null}
         <List>{this.createListItems()}</List>
       </>
     );

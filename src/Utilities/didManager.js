@@ -1,6 +1,6 @@
 import Web3 from 'web3';
 import {Resolver} from 'did-resolver';
-import EthrDID from 'ethr-did';
+import EthrDid from './ethrDid';
 import ethr from 'ethr-did-resolver';
 import {saveKeystore, getKeystores} from './asyncStorage';
 
@@ -13,7 +13,7 @@ const endPoints = {
 const testPassword = 'DIDFun';
 
 export default class DIDManager {
-  constructor() {
+  constructor(didCallback) {
     if (!!DIDManager.instance) {
       return DIDManager.instance;
     }
@@ -21,23 +21,26 @@ export default class DIDManager {
     this.web3 = new Web3(new Web3.providers.HttpProvider(endPoints.testnet));
     const ethrResolver = ethr.getResolver();
     this.resolver = new Resolver(ethrResolver);
-    this.ethrDIDs = [];
-    // TODO improve
-    getKeystores().then(keystores => {
-      console.log('[DIDManager] keystores', keystores);
-      for (keystore of keystores) {
-        let account = this.web3.eth.accounts.decrypt(keystore, testPassword);
-        this.ethrDIDs.push(
-          new EthrDID({
-            provider: this.web3.currentProvider,
-            address: account.address,
-            privateKey: account.privateKey,
-          }),
-        );
-      }
-      console.log('[DIDManager] DIDs', this.getDIDs());
-    });
-    this.instance = this;
+    this.ethrDids = [];
+    this.importFromStorage(didCallback);
+    console.log('[DIDManager] DIDs', this.getDids());
+  }
+
+  importFromStorage(callback) {
+    getKeystores()
+      .then(keystores => {
+        for (keystore of keystores) {
+          const account = this.web3.eth.accounts.decrypt(
+            keystore,
+            testPassword,
+          );
+          this.addEthrAccount(account, false);
+        }
+        if (callback) {
+          callback();
+        }
+      })
+      .catch(error => console.error(error));
   }
 
   //TODO Change to congruent naming
@@ -51,21 +54,25 @@ export default class DIDManager {
     this.addEthrAccount(account);
   }
 
-  addEthrAccount(account) {
-    this.ethrDIDs.push(
-      new EthrDID({
+  addEthrAccount(account, store = true) {
+    console.log('priv', account.privateKey);
+    console.log('pub', account.address);
+    this.ethrDids.push(
+      new EthrDid({
         provider: this.web3.currentProvider,
         address: account.address,
         privateKey: account.privateKey,
       }),
     );
-    saveKeystore(
-      this.web3.eth.accounts.encrypt(account.privateKey, testPassword),
-    );
+    if (store) {
+      saveKeystore(
+        this.web3.eth.accounts.encrypt(account.privateKey, testPassword),
+      );
+    }
   }
 
-  getDIDs() {
-    return this.ethrDIDs.map(ethrDID => ethrDID.did);
+  getDids() {
+    return this.ethrDids;
   }
 
   getGasPrice() {

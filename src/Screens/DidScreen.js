@@ -24,29 +24,36 @@ function newEthrDID() {
 }
 
 export default class DidScreen extends React.Component {
-  componentDidMount() {
+  constructor(props) {
+    super(props);
+    // TODO Move this out of this screen
+
     const SIOPRequest = {
       client_id: this.props.navigation.getParam('client_id', ''),
       scope: this.props.navigation.getParam('scope', ''),
       request: this.props.navigation.getParam('request', ''),
     };
-    console.log(
-      '[HomeScreen] ComponentDidMount with SIOPRequest: ',
-      SIOPRequest,
-    );
-    const returnUrl = SIOPRequest.client_id;
-    if (returnUrl) {
-      Linking.canOpenURL(returnUrl)
+    console.log('[DidScreen] Received SIOPRequest', SIOPRequest);
+
+    this.state = {
+      returnUrl: SIOPRequest.client_id,
+    };
+  }
+
+  componentDidMount() {
+    if (this.state.returnUrl) {
+      Linking.canOpenURL(this.state.returnUrl)
         .then(supported => {
           if (!supported) {
-            console.log("Can't handle url: " + returnUrl);
+            console.log("Can't handle url: " + this.state.returnUrl);
           } else {
-            return Linking.openURL(returnUrl);
+            return Linking.openURL(this.state.returnUrl);
           }
         })
         .catch(err => console.error('An error occurred', err));
     }
   }
+
   render() {
     return (
       <Container>

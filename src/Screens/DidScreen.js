@@ -14,43 +14,57 @@ import {
   Text,
 } from 'native-base';
 import {Linking} from 'react-native';
-import Did from '../Components/DidList';
+import DidList from '../Components/DidList';
 import DIDManager from '../Utilities/didManager';
-
-function newEthrDID() {
-  console.log('[HomeScreen] Creating new Ethr DID');
-  didManager = new DIDManager();
-  didManager.newEthrDID();
-}
 
 export default class DidScreen extends React.Component {
   constructor(props) {
     super(props);
-    // TODO Move this out of this screen
+    let myIDRequest = null;
+    // TODO Move this out of this screen / check if opend with request
+    const response_type = this.props.navigation.getParam('response_type', '');
+    console.log('[DidScreen] response_type:', response_type);
+    if (response_type) {
+      myIDRequest = {
+        response_type: response_type,
+        client_id: this.props.navigation.getParam('client_id', ''),
+        scope: this.props.navigation.getParam('scope', ''),
+        request: this.props.navigation.getParam('request', ''),
+      };
 
-    const SIOPRequest = {
-      client_id: this.props.navigation.getParam('client_id', ''),
-      scope: this.props.navigation.getParam('scope', ''),
-      request: this.props.navigation.getParam('request', ''),
-    };
-    console.log('[DidScreen] Received SIOPRequest', SIOPRequest);
+      console.log('[DidScreen] Received myIDRequest', myIDRequest);
+
+      //TODO select DID
+    }
 
     this.state = {
-      returnUrl: SIOPRequest.client_id,
+      myIDRequest: myIDRequest,
     };
+    console.log(
+      '[DidScreen] Received this.state.myIDRequest',
+      this.state.myIDRequest,
+    );
   }
 
-  componentDidMount() {
+  newEthrDid() {
+    console.log('[DidScreen] Creating new Ethr DID');
+    let didManager = new DIDManager();
+    didManager.newEthrDid();
+  }
+
+  openReturnUrl() {
     if (this.state.returnUrl) {
       Linking.canOpenURL(this.state.returnUrl)
         .then(supported => {
           if (!supported) {
-            console.log("Can't handle url: " + this.state.returnUrl);
+            console.log(
+              '[DidScreen] Url is unsported: ' + this.state.returnUrl,
+            );
           } else {
-            return Linking.openURL(this.state.returnUrl);
+            Linking.openURL(this.state.returnUrl);
           }
         })
-        .catch(err => console.error('An error occurred', err));
+        .catch(err => console.error('[DidScreen] An error occurred', err));
     }
   }
 
@@ -68,12 +82,12 @@ export default class DidScreen extends React.Component {
           </Body>
           <Right>
             <Button transparent>
-              <Icon name="add" onPress={newEthrDID} />
+              <Icon name="add" onPress={this.newEthrDid} />
             </Button>
           </Right>
         </Header>
         <Content>
-          <Did />
+          <DidList myIDRequest={this.state.myIDRequest} />
         </Content>
         <Footer>
           <FooterTab>

@@ -2,26 +2,28 @@ import React, {Component} from 'react';
 import {Text, List, ListItem} from 'native-base';
 import DIDManager from '../Utilities/didManager';
 
-//TODO
-const privateEthrKey =
-  '055625aecdde464cbbe6ef3ee5806ed74eafe57a01523e6a01a6d09b1c626495';
-
 export default class DidList extends Component {
   didManager;
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       dids: [],
       loading: true,
+      myIDRequest: this.props.myIDRequest,
     };
-    this.didManager = new DIDManager(() => this.updateDids());
     this.updateDids = this.updateDids.bind(this);
+    this.didManager = new DIDManager(() => this.updateDids());
+    console.log('[DidList] myIDRequest', this.state.myIDRequest);
+  }
+
+  componentDidMount() {
+    this.didManager.importFromStorage();
   }
 
   updateDids() {
     console.log(
-      'reload',
+      '[DidList] update DIDs',
       this.didManager.getDids().map(ethrDid => ethrDid.did),
     );
     this.setState({
@@ -35,7 +37,12 @@ export default class DidList extends Component {
     for (ethrDid of this.state.dids) {
       listItems.push(
         <ListItem key={ethrDid.did}>
-          <Text onPress={() => ethrDid.generateSiopResponse()}>
+          <Text
+            onPress={() =>
+              this.state.myIDRequest
+                ? ethrDid.generateMyIDResponse(this.state.myIDRequest.request)
+                : null
+            }>
             {ethrDid.did}
           </Text>
         </ListItem>,
@@ -52,6 +59,15 @@ export default class DidList extends Component {
           <List>
             <ListItem>
               <Text onPress={this.updateDids}>Loading...</Text>
+            </ListItem>
+          </List>
+        ) : null}
+        {this.state.myIDRequest ? (
+          <List>
+            <ListItem>
+              <Text onPress={this.updateDids}>
+                Select DID for authentication
+              </Text>
             </ListItem>
           </List>
         ) : null}

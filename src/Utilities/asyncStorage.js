@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-community/async-storage';
 
+//TODO async keystore - async ()?
 export const saveKeystore = async keystore => {
   try {
     //TODO error handling

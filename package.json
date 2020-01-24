@@ -10,6 +10,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@decentralized-identity/did-auth-jose": "^0.1.14",
     "@react-native-community/async-storage": "^1.7.1",
     "@react-native-community/masked-view": "^0.1.5",
     "@tradle/react-native-http": "^2.0.1",
@@ -22,6 +23,7 @@
     "did-resolver": "^1.1.0",
     "dns.js": "^1.0.1",
     "domain-browser": "^1.2.0",
+    "ethjs-provider-http": "^0.1.6",
     "ethr-did": "^1.1.0",
     "ethr-did-resolver": "^1.0.3",
     "events": "^1.1.1",

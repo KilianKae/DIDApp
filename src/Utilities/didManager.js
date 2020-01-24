@@ -1,8 +1,9 @@
 import Web3 from 'web3';
-import {Resolver} from 'did-resolver';
+import HttpProvider from 'ethjs-provider-http';
 import EthrDid from './ethrDid';
-import ethr from 'ethr-did-resolver';
 import {saveKeystore, getKeystores} from './asyncStorage';
+import {generatePrivateKey} from './generate-keys';
+import {jwkToDidPair} from './jwk-to-did';
 
 const endPoints = {
   mainnet: 'https://mainnet.infura.io/v3/ab803204cb9b49adb488de9dd5a06ad9',
@@ -13,73 +14,81 @@ const endPoints = {
 const testPassword = 'DIDFun';
 
 export default class DIDManager {
-  constructor(didCallback) {
+  constructor(onUpdate) {
     if (!!DIDManager.instance) {
       return DIDManager.instance;
     }
     DIDManager.instance = this;
+    Web3.providers.HttpProvider.prototype.sendAsync =
+      Web3.providers.HttpProvider.prototype.send;
     this.web3 = new Web3(new Web3.providers.HttpProvider(endPoints.testnet));
-    const ethrResolver = ethr.getResolver();
-    this.resolver = new Resolver(ethrResolver);
+    this.provider = new HttpProvider(endPoints.testnet);
     this.ethrDids = [];
-    this.importFromStorage(didCallback);
-    console.log('[DIDManager] DIDs', this.getDids());
+    //TODO improve
+    this.didsLoaded = false;
+    this.onUpdate = onUpdate;
   }
 
-  importFromStorage(callback) {
-    getKeystores()
-      .then(keystores => {
-        for (keystore of keystores) {
-          const account = this.web3.eth.accounts.decrypt(
-            keystore,
-            testPassword,
+  importFromStorage() {
+    if (this.didsLoaded) {
+      this.onUpdate();
+    } else {
+      getKeystores()
+        .then(keystores => {
+          for (keystore of keystores) {
+            this.addEthrAccountFromJwk(keystore, false);
+          }
+          this.didsLoaded = true;
+          console.log(
+            '[DIDManager] Loaded DIDs',
+            this.getDids().map(ethrDid => ethrDid.did),
           );
-          this.addEthrAccount(account, false);
-        }
-        if (callback) {
-          callback();
-        }
-      })
-      .catch(error => console.error(error));
+        })
+        .catch(error => console.error(error));
+    }
   }
 
-  //TODO Change to congruent naming
-  newEthrDID() {
-    const account = this.web3.eth.accounts.create();
-    this.addEthrAccount(account);
+  newEthrDid() {
+    console.log('[DidManager] creating new keypair');
+    generatePrivateKey()
+      .then(jwk => {
+        this.addEthrAccountFromJwk(jwk);
+      })
+      .catch(error => {
+        console.log('[DidManager] error', error);
+      });
   }
 
   addEthrAccountFromPrivateKey(privateEthrKey) {
+    //TODO remove web3
     const account = this.web3.eth.accounts.privateKeyToAccount(privateEthrKey);
     this.addEthrAccount(account);
   }
 
-  addEthrAccount(account, store = true) {
-    console.log('priv', account.privateKey);
-    console.log('pub', account.address);
-    this.ethrDids.push(
-      new EthrDid({
-        provider: this.web3.currentProvider,
+  addEthrAccountFromJwk(jwk, store = true) {
+    if (store) {
+      saveKeystore(jwk);
+    }
+    const {address, privateKey} = jwkToDidPair(jwk);
+    const account = {address, privateKey};
+    console.log('[DidManager] account from jwk', account);
+    this.addEthrAccount(account, jwk);
+  }
+
+  addEthrAccount(account, jwk) {
+    let ethrDid = new EthrDid(
+      {
+        provider: this.provider,
         address: account.address,
         privateKey: account.privateKey,
-      }),
+      },
+      jwk,
     );
-    if (store) {
-      saveKeystore(
-        this.web3.eth.accounts.encrypt(account.privateKey, testPassword),
-      );
-    }
+    this.ethrDids.push(ethrDid);
+    this.onUpdate();
   }
 
   getDids() {
     return this.ethrDids;
-  }
-
-  getGasPrice() {
-    return this.web3.eth.getGasPrice();
-  }
-
-  getEthrDidAddress(pos) {
-    return this.resolver.resolve(this.ethrDIDs[pos].did);
   }
 }

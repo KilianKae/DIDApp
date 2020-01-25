@@ -19,12 +19,12 @@ export default class DidList extends Component {
 
   componentDidMount() {
     console.log('[DidList] Mounted');
-    this.didManager.subscribe(() => this.updateDids());
+    this.didManager.subscribe(this.updateDids);
     this.didManager.importFromStorage();
   }
 
   componentWillUnmount() {
-    this.didManager.unsubscribe(() => this.updateDids());
+    this.didManager.unsubscribe(this.updateDids);
   }
 
   updateDids() {

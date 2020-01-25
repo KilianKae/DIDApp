@@ -13,21 +13,25 @@ export default class DidList extends Component {
       myIDRequest: this.props.myIDRequest,
     };
     this.updateDids = this.updateDids.bind(this);
-    this.didManager = new DIDManager(() => this.updateDids());
+    this.didManager = new DIDManager();
     console.log('[DidList] myIDRequest', this.state.myIDRequest);
   }
 
   componentDidMount() {
+    console.log('[DidList] Mounted');
+    this.didManager.subscribe(() => this.updateDids());
     this.didManager.importFromStorage();
   }
 
+  componentWillUnmount() {
+    this.didManager.unsubscribe(() => this.updateDids());
+  }
+
   updateDids() {
-    console.log(
-      '[DidList] update DIDs',
-      this.didManager.getDids().map(ethrDid => ethrDid.did),
-    );
+    console.log('[DidList] Updating Dids');
+    const dids = this.didManager.getDids();
     this.setState({
-      dids: this.didManager.getDids(),
+      dids,
       loading: false,
     });
   }
@@ -40,7 +44,7 @@ export default class DidList extends Component {
           <Text
             onPress={() =>
               this.state.myIDRequest
-                ? ethrDid.generateMyIDResponse(this.state.myIDRequest.request)
+                ? ethrDid.generateSiopResponse(this.state.myIDRequest.request)
                 : null
             }>
             {ethrDid.did}

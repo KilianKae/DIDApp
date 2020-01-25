@@ -14,7 +14,11 @@ const endPoints = {
 const testPassword = 'DIDFun';
 
 export default class DIDManager {
-  constructor(onUpdate) {
+  handlers = []; // observers
+  web3;
+  ethrDids = [];
+
+  constructor() {
     if (!!DIDManager.instance) {
       return DIDManager.instance;
     }
@@ -23,15 +27,32 @@ export default class DIDManager {
       Web3.providers.HttpProvider.prototype.send;
     this.web3 = new Web3(new Web3.providers.HttpProvider(endPoints.testnet));
     this.provider = new HttpProvider(endPoints.testnet);
-    this.ethrDids = [];
     //TODO improve
     this.didsLoaded = false;
-    this.onUpdate = onUpdate;
+  }
+
+  // Add observer for dids
+  subscribe(fn) {
+    this.handlers.push(fn);
+  }
+
+  // Remove observer for dids
+  unsubscribe(fn) {
+    this.handlers = this.handlers.filter(function(item) {
+      if (item !== fn) {
+        return item;
+      }
+    });
+  }
+
+  // Puplish did change
+  publish() {
+    this.handlers.forEach(fn => fn.call());
   }
 
   importFromStorage() {
     if (this.didsLoaded) {
-      this.onUpdate();
+      this.publish();
     } else {
       getKeystores()
         .then(keystores => {
@@ -49,7 +70,7 @@ export default class DIDManager {
   }
 
   newEthrDid() {
-    console.log('[DidManager] creating new keypair');
+    console.log('[DidManager] Creating new keypair');
     generatePrivateKey()
       .then(jwk => {
         this.addEthrAccountFromJwk(jwk);
@@ -85,7 +106,7 @@ export default class DIDManager {
       jwk,
     );
     this.ethrDids.push(ethrDid);
-    this.onUpdate();
+    this.publish();
   }
 
   getDids() {

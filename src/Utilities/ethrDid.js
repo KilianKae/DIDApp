@@ -1,66 +1,71 @@
 import EthrDID from 'ethr-did';
 import {Resolver} from 'did-resolver';
 import ethr from 'ethr-did-resolver';
-import didJWT, {verifyJWT, decodeJWT, createJWT} from 'did-jwt';
-import {generatePublicKey} from './generate-keys';
+import didJWT, {verifyJWT, createJWT} from 'did-jwt';
+import {toEthereumAddress} from 'did-jwt/lib/index';
+const EC = require('elliptic').ec;
+const secp256k1 = new EC('secp256k1');
 
 export default class EthrDid extends EthrDID {
   signer;
   jwk;
 
-  constructor(args, jwk) {
+  constructor({provider, address, privateKey, jwk}) {
     console.log('[EthrDID] New EtherDID');
-    super(args);
+    super({provider, address, privateKey});
     this.jwk = jwk;
-    this.signer = didJWT.SimpleSigner(args.privateKey);
+    this.signer = didJWT.SimpleSigner(privateKey);
   }
 
-  generateSiopResponse(encodedRequestToken, encrypt = false) {
+  static createKeyPair() {
+    const kp = secp256k1.genKeyPair();
+    const x = kp
+      .getPublic()
+      .getX()
+      .toJSON();
+    const y = kp
+      .getPublic()
+      .getY()
+      .toJSON();
+    const publicKey = kp.getPublic('hex');
+    const privateKey = kp.getPrivate('hex');
+    const address = toEthereumAddress(publicKey);
+    const kid = `${address}#verikey-1`;
+    const crv = 'secp256k1';
+    const kty = 'EC';
+    const jwk = {crv, x, y, kty, kid};
+    return {address, privateKey, jwk};
+  }
+
+  async generateSiopResponse(encodedRequestToken, encrypt = false) {
     let nonce;
-    this.verifyJWT(encodedRequestToken)
-      .then(verifiedRequestToken => {
+    const siopResonse = await this.verifyJWT(encodedRequestToken).then(
+      verifiedRequestToken => {
         console.log('[EthrDID] verifiedRequestToken:', verifiedRequestToken);
-        const kid = '#key-1';
         nonce = verifiedRequestToken.payload.nonce;
-        return generatePublicKey(kid, this.jwk);
-      })
-      .then(publicKey => {
-        const kid = `${this.did}#key-1`;
-        const sub_jwk = {
-          crv: publicKey.crv,
-          kid: kid,
-          kty: publicKey.kty,
-          x: publicKey.x,
-          y: publicKey.y,
-        };
         // Expiration Date for response token: seconds till now + 1h
         const expiration = Date.now() / 1000 + 3600;
-        const siopResponse = {
+        const response = {
           iss: 'https://self-issued.me',
-          nonce, //TODO
+          nonce,
           exp: expiration,
-          sub_jwk,
+          sub_jwk: this.jwk,
           did: this.did,
         };
-        return this.signJWT(siopResponse);
-      })
-      .then(jwt => console.log('[EthrDID] siopResponse', jwt))
-      .catch(error => console.error(error));
+        return this.signJWT(response);
+      },
+    );
+    return siopResonse;
   }
 
   //TODO try to remove, unistall resolvers
   async verifyJWT(jwt, audience = this.did) {
     const ethrResolver = ethr.getResolver();
     const resolver = new Resolver(ethrResolver);
-    const verifiedJWT = await verifyJWT(jwt, {resolver, audience});
-    return verifiedJWT;
-  }
-
-  signJWT(jwt) {
-    return createJWT(jwt, {
-      alg: 'ES256K-R',
-      issuer: this.did,
-      signer: this.signer,
+    const verifiedJWT = await verifyJWT(jwt, {
+      resolver,
+      audience,
     });
+    return verifiedJWT;
   }
 }

@@ -13,36 +13,36 @@ import {
   Icon,
   Text,
 } from 'native-base';
-import {Linking} from 'react-native';
 import DidList from '../Components/DidList';
 import DIDManager from '../Utilities/didManager';
 
 export default class DidScreen extends React.Component {
   constructor(props) {
     super(props);
-    let myIDRequest = null;
+    //TODO null or undefiend?
+    let siopRequest = null;
     // TODO Move this out of this screen / check if opend with request
     const response_type = this.props.navigation.getParam('response_type', '');
     console.log('[DidScreen] response_type:', response_type);
     if (response_type) {
-      myIDRequest = {
+      siopRequest = {
         response_type: response_type,
         client_id: this.props.navigation.getParam('client_id', ''),
         scope: this.props.navigation.getParam('scope', ''),
-        request: this.props.navigation.getParam('request', ''),
+        requestToken: this.props.navigation.getParam('request', ''),
       };
 
-      console.log('[DidScreen] Received myIDRequest', myIDRequest);
+      console.log('[DidScreen] Received siopRequest', siopRequest);
 
       //TODO select DID
     }
 
     this.state = {
-      myIDRequest: myIDRequest,
+      siopRequest: siopRequest,
     };
     console.log(
-      '[DidScreen] Received this.state.myIDRequest',
-      this.state.myIDRequest,
+      '[DidScreen] Received this.state.siopRequest',
+      this.state.siopRequest,
     );
   }
 
@@ -50,22 +50,6 @@ export default class DidScreen extends React.Component {
     console.log('[DidScreen] Creating new Ethr DID');
     let didManager = new DIDManager();
     didManager.newEthrDid();
-  }
-
-  openReturnUrl() {
-    if (this.state.returnUrl) {
-      Linking.canOpenURL(this.state.returnUrl)
-        .then(supported => {
-          if (!supported) {
-            console.log(
-              '[DidScreen] Url is unsported: ' + this.state.returnUrl,
-            );
-          } else {
-            Linking.openURL(this.state.returnUrl);
-          }
-        })
-        .catch(err => console.error('[DidScreen] An error occurred', err));
-    }
   }
 
   render() {
@@ -87,7 +71,14 @@ export default class DidScreen extends React.Component {
           </Right>
         </Header>
         <Content>
-          <DidList myIDRequest={this.state.myIDRequest} />
+          {this.state.siopRequest ? (
+            <DidList
+              client_id={this.state.siopRequest.client_id}
+              requestToken={this.state.siopRequest.requestToken}
+            />
+          ) : (
+            <DidList />
+          )}
         </Content>
         <Footer>
           <FooterTab>

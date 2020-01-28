@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {Linking} from 'react-native';
 import {Text, List, ListItem} from 'native-base';
 import DIDManager from '../Utilities/didManager';
 
@@ -10,11 +11,13 @@ export default class DidList extends Component {
     this.state = {
       dids: [],
       loading: true,
-      myIDRequest: this.props.myIDRequest,
+      requestToken: this.props.requestToken,
+      client_id: this.props.client_id,
     };
     this.updateDids = this.updateDids.bind(this);
     this.didManager = new DIDManager();
-    console.log('[DidList] myIDRequest', this.state.myIDRequest);
+    console.log('[DidList] requestToken', this.state.requestToken);
+    console.log('[DidList] client_id', this.state.client_id);
   }
 
   componentDidMount() {
@@ -36,6 +39,39 @@ export default class DidList extends Component {
     });
   }
 
+  handelSIOPRequest(ethrDid) {
+    console.log('[DidScreen] Generating SIOP Response');
+    ethrDid
+      .generateSiopResponse(this.state.requestToken)
+      .then(siopResponseToken => {
+        console.log(
+          '[DidScreen] Received SIOP response token',
+          siopResponseToken,
+        );
+        this.openReturnUrl(this.state.client_id, siopResponseToken);
+      })
+      .catch(err => console.error('[DidScreen] An error occurred', err));
+  }
+
+  //TODO Naming
+  openReturnUrl(client_id, siopResponseToken) {
+    let url = client_id;
+    url += '/siopResponse?id_token=';
+    url += siopResponseToken;
+    console.log('[DidScreen] Return url: ' + url);
+    if (url) {
+      Linking.canOpenURL(url)
+        .then(supported => {
+          if (!supported) {
+            console.log('[DidScreen] Url is unsported: ' + url);
+          } else {
+            Linking.openURL(url);
+          }
+        })
+        .catch(err => console.error('[DidScreen] An error occurred', err));
+    }
+  }
+
   createListItems() {
     let listItems = [];
     for (ethrDid of this.state.dids) {
@@ -43,9 +79,7 @@ export default class DidList extends Component {
         <ListItem key={ethrDid.did}>
           <Text
             onPress={() =>
-              this.state.myIDRequest
-                ? ethrDid.generateSiopResponse(this.state.myIDRequest.request)
-                : null
+              this.state.requestToken ? this.handelSIOPRequest(ethrDid) : null
             }>
             {ethrDid.did}
           </Text>
@@ -55,7 +89,7 @@ export default class DidList extends Component {
     return listItems;
   }
 
-  //TODO nicer laoding indicator
+  //TODO nicer laoding indicator/request indicator
   render() {
     return (
       <>
@@ -66,7 +100,7 @@ export default class DidList extends Component {
             </ListItem>
           </List>
         ) : null}
-        {this.state.myIDRequest ? (
+        {this.state.requestToken ? (
           <List>
             <ListItem>
               <Text onPress={this.updateDids}>

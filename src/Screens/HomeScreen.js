@@ -4,8 +4,8 @@ import {
   Header,
   Title,
   Content,
-  Footer,
-  FooterTab,
+  Card,
+  CardItem,
   Button,
   Left,
   Right,
@@ -19,23 +19,31 @@ export default class HomeScreen extends React.Component {
     return (
       <Container>
         <Header>
-          <Left>
-            <Button transparent>
-              <Icon name="menu" />
-            </Button>
-          </Left>
+          <Left />
           <Body>
             <Title>Home</Title>
           </Body>
           <Right />
         </Header>
-        <Content>
-          <Button onPress={() => this.props.navigation.navigate('Dids')}>
-            <Text>DIDs</Text>
-          </Button>
-          <Button onPress={() => this.props.navigation.navigate('Credentials')}>
-            <Text>Credentials</Text>
-          </Button>
+        <Content padder>
+          <Card>
+            <CardItem
+              header
+              button
+              bordered
+              onPress={() => this.props.navigation.navigate('Dids')}>
+              <Text>Indentifiers</Text>
+            </CardItem>
+          </Card>
+          <Card>
+            <CardItem
+              header
+              button
+              bordered
+              onPress={() => this.props.navigation.navigate('Credentials')}>
+              <Text>Credentials</Text>
+            </CardItem>
+          </Card>
         </Content>
       </Container>
     );

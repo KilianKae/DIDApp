@@ -56,11 +56,7 @@ export default class DidScreen extends React.Component {
     return (
       <Container>
         <Header>
-          <Left>
-            <Button transparent>
-              <Icon name="menu" />
-            </Button>
-          </Left>
+          <Left />
           <Body>
             <Title>DIDs</Title>
           </Body>

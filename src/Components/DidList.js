@@ -74,7 +74,7 @@ export default class DidList extends Component {
 
   createListItems() {
     let listItems = [];
-    for (ethrDid of this.state.dids) {
+    for (const ethrDid of this.state.dids) {
       listItems.push(
         <ListItem key={ethrDid.did}>
           <Text

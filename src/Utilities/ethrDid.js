@@ -1,7 +1,7 @@
 import EthrDID from 'ethr-did';
 import {Resolver} from 'did-resolver';
 import ethr from 'ethr-did-resolver';
-import didJWT, {verifyJWT, createJWT} from 'did-jwt';
+import didJWT, {verifyJWT} from 'did-jwt';
 import {toEthereumAddress} from 'did-jwt/lib/index';
 const EC = require('elliptic').ec;
 const secp256k1 = new EC('secp256k1');

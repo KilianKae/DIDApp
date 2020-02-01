@@ -37,13 +37,6 @@ export default class HomeScreen extends React.Component {
             <Text>Credentials</Text>
           </Button>
         </Content>
-        <Footer>
-          <FooterTab>
-            <Button full>
-              <Text>Footer</Text>
-            </Button>
-          </FooterTab>
-        </Footer>
       </Container>
     );
   }

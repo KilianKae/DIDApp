@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-community/async-storage';
-import Credential from '../Models/credential-model';
+import VerifiableCredential from '../Models/verifiableCredential';
 
 //TODO async keystore - async ()?
 export const saveKeystore = async keystore => {
@@ -41,7 +41,7 @@ export const getCredentials = async () => {
     let credentialsString = (await AsyncStorage.getItem('credentials')) || '[]';
     console.log('sdsadaffas', credentialsString);
     credentials = JSON.parse(credentialsString);
-    credentials.map(crd => new Credential(crd));
+    credentials.map(crd => new VerifiableCredential(crd));
   } catch (error) {
     console.error(error.message);
   }

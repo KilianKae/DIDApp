@@ -12,8 +12,8 @@ const endPoints = {
 export default class DIDManager {
   handlers = []; // observers
   ethrDids = [];
-  provider;
-  didsLoaded;
+  provider = undefined;
+  didsLoaded = false;
 
   constructor() {
     if (!!DIDManager.instance) {
@@ -21,7 +21,6 @@ export default class DIDManager {
     }
     DIDManager.instance = this;
     this.provider = new HttpProvider(endPoints.testnet);
-    this.didsLoaded = false;
   }
 
   // Add observer for dids

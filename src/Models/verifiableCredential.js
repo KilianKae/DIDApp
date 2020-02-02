@@ -1,6 +1,6 @@
 import {decodeJWT} from 'did-jwt';
 
-export default class CredentialModel {
+export default class VerifiableCredential {
   id;
   claims;
   subject;
@@ -28,7 +28,7 @@ export default class CredentialModel {
         claims.push({key, value});
       }
     }
-    return new CredentialModel({
+    return new VerifiableCredential({
       claims,
       subject: decodedJWT.payload.claim.credentialSubject.id,
       issuer: decodedJWT.payload.iss,

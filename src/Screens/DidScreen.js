@@ -58,7 +58,7 @@ export default class DidScreen extends React.Component {
         <Header>
           <Left />
           <Body>
-            <Title>DIDs</Title>
+            <Title>Identifiers</Title>
           </Body>
           <Right>
             <Button transparent>

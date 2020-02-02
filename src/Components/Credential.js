@@ -2,19 +2,9 @@ import React, {Component} from 'react';
 import {Text, Card, CardItem, Body} from 'native-base';
 
 export default class Credential extends Component {
-  didManager;
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      credential: this.props.credential,
-    };
-    console.log('[Credential] dfsdf', this.state.credential);
-  }
-
   createClaimsList() {
     let claims = [];
-    for (let claim of this.state.credential.claims) {
+    for (let claim of this.props.credential.claims) {
       claims.push(
         <Text note>
           {claim.key}: {claim.value}
@@ -28,14 +18,14 @@ export default class Credential extends Component {
     //TODO
     return (
       <>
-        <Card key={Math.random.toString()}>
+        <Card>
           <CardItem header bordered>
             <Text>Credential</Text>
           </CardItem>
           <CardItem bordered>
             <Body>
               <Text>Subject</Text>
-              <Text note>{this.state.credential.subject}</Text>
+              <Text note>{this.props.credential.subject}</Text>
             </Body>
           </CardItem>
           <CardItem bordered>

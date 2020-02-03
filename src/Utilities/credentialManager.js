@@ -53,7 +53,11 @@ export default class CredentialManager {
     }
   }
 
-  getCredentialForDid(did) {
-    return this.credentials.filter(crd => crd.subject == did);
+  getCredentials(did) {
+    if (did) {
+      return this.credentials.filter(crd => crd.subject == did);
+    } else {
+      return this.credentials;
+    }
   }
 }

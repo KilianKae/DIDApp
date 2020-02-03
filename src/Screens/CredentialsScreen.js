@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import {Alert} from 'react-native';
 import {
   Container,
   Header,
@@ -10,7 +9,6 @@ import {
   Body,
 } from 'native-base';
 import CredentialList from '../Components/CredentialList';
-import Credential from '../Models/verifiableCredential';
 import CredentialManager from '../Utilities/credentialManager';
 
 export default class CredentialsScreen extends Component {
@@ -37,7 +35,9 @@ export default class CredentialsScreen extends Component {
 
   updateCredentials() {
     this.setState({
-      credentials: this.credentialManager.credentials,
+      credentials: this.credentialManager.getCredentials(
+        this.props.navigation.getParam('did', undefined),
+      ),
     });
   }
 

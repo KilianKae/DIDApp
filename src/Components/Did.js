@@ -1,38 +1,17 @@
 import React, {Component} from 'react';
 import {Text, Card, CardItem, Body, Right, Icon} from 'native-base';
-import {Linking} from 'react-native';
+import {openURL} from '../Services/browserLinking';
 
 export default class Did extends Component {
   handelSIOPRequest(ethrDid) {
-    console.log('[DidScreen] Generating SIOP Response');
+    console.log('[Did] Generating SIOP Response');
     ethrDid
       .generateSiopResponse(this.props.requestToken)
-      .then(siopResponseToken => {
-        console.log(
-          '[DidScreen] Received SIOP response token',
-          siopResponseToken,
-        );
-        this.openReturnUrl(this.props.client_id, siopResponseToken);
+      .then(id_token => {
+        console.log('[Did] Generated SIOP response token', id_token);
+        openURL(this.props.client_id + '/siopResponse', {id_token});
       })
-      .catch(err => console.error('[DidScreen] An error occurred', err));
-  }
-
-  openReturnUrl(client_id, siopResponseToken) {
-    let url = client_id;
-    url += '/siopResponse?id_token=';
-    url += siopResponseToken;
-    console.log('[DidScreen] Return url: ' + url);
-    if (url) {
-      Linking.canOpenURL(url)
-        .then(supported => {
-          if (!supported) {
-            console.log('[DidScreen] Url is unsported: ' + url);
-          } else {
-            Linking.openURL(url);
-          }
-        })
-        .catch(err => console.error('[DidScreen] An error occurred', err));
-    }
+      .catch(err => console.error('[Did] An error occurred', err));
   }
 
   createSecondLine() {

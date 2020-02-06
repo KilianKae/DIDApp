@@ -7,9 +7,11 @@ import {
   Left,
   Right,
   Body,
+  Button,
+  Icon,
 } from 'native-base';
 import CredentialList from '../Components/CredentialList';
-import CredentialManager from '../Utilities/credentialManager';
+import CredentialManager from '../Services/credentialManager';
 
 export default class CredentialsScreen extends Component {
   credentialManager = undefined;
@@ -45,14 +47,28 @@ export default class CredentialsScreen extends Component {
     return (
       <Container>
         <Header>
-          <Left />
+          <Left>
+            <Button transparent>
+              <Icon
+                name="arrow-back"
+                onPress={() => this.props.navigation.popToTop()}
+              />
+            </Button>
+          </Left>
           <Body>
-            <Title>Credentials</Title>
+            <Title>
+              {this.props.navigation.getParam('returnUrl', undefined)
+                ? 'Select Credential'
+                : 'Credentials'}
+            </Title>
           </Body>
           <Right />
         </Header>
         <Content padder>
-          <CredentialList credentials={this.state.credentials} />
+          <CredentialList
+            credentials={this.state.credentials}
+            returnUrl={this.props.navigation.getParam('returnUrl', undefined)}
+          />
         </Content>
       </Container>
     );

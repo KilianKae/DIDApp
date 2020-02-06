@@ -1,7 +1,18 @@
 import React, {Component} from 'react';
-import {Text, Card, CardItem, Body} from 'native-base';
+import {Text, Card, CardItem, Body, Right, Icon} from 'native-base';
+import {openURL} from '../Services/browserLinking';
 
 export default class Credential extends Component {
+  handleReturnUrl() {
+    const query = {
+      subject: this.props.credential.subject,
+      issuer: this.props.credential.issuer,
+      signature: this.props.credential.signature,
+      claims: JSON.stringify(this.props.credential.claims),
+    };
+    openURL(this.props.returnUrl, query);
+  }
+
   createClaimsList() {
     let claims = [];
     for (let claim of this.props.credential.claims) {
@@ -15,7 +26,6 @@ export default class Credential extends Component {
   }
 
   render() {
-    //TODO
     return (
       <>
         <Card>
@@ -34,6 +44,16 @@ export default class Credential extends Component {
               {this.createClaimsList()}
             </Body>
           </CardItem>
+          {this.props.returnUrl ? (
+            <CardItem bordered button onPress={() => this.handleReturnUrl()}>
+              <Body>
+                <Text>Send</Text>
+              </Body>
+              <Right>
+                <Icon name="arrow-forward" />
+              </Right>
+            </CardItem>
+          ) : null}
         </Card>
       </>
     );

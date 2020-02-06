@@ -14,7 +14,7 @@ import {
   Text,
 } from 'native-base';
 import DidList from '../Components/DidList';
-import DIDManager from '../Utilities/didManager';
+import DIDManager from '../Services/didManager';
 
 export default class DidScreen extends React.Component {
   constructor(props) {
@@ -75,7 +75,14 @@ export default class DidScreen extends React.Component {
     return (
       <Container>
         <Header>
-          <Left />
+          <Left>
+            <Button transparent>
+              <Icon
+                name="arrow-back"
+                onPress={() => this.props.navigation.popToTop()}
+              />
+            </Button>
+          </Left>
           <Body>
             <Title>
               {this.state.siopRequest ? 'Select DID' : 'Identifier'}

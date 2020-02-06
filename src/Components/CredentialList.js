@@ -6,7 +6,11 @@ export default class CredentialList extends Component {
     let listItems = [];
     for (const credential of this.props.credentials) {
       listItems.push(
-        <Credential key={credential.id} credential={credential} />,
+        <Credential
+          key={credential.id}
+          credential={credential}
+          returnUrl={this.props.returnUrl}
+        />,
       );
     }
     return listItems;

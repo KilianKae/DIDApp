@@ -4,15 +4,15 @@ import Credential from './Credential';
 export default class CredentialList extends Component {
   createListItems() {
     let listItems = [];
-    for (const credential of this.props.credentials) {
+    this.props.credentials.forEach((credential, i) => {
       listItems.push(
         <Credential
-          key={credential.id}
+          key={i}
           credential={credential}
           returnUrl={this.props.returnUrl}
         />,
       );
-    }
+    });
     return listItems;
   }
 

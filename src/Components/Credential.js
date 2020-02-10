@@ -1,6 +1,9 @@
 import React, {Component} from 'react';
 import {Text, Card, CardItem, Body, Right, Icon} from 'native-base';
 import {openURL} from '../Services/browserLinking';
+import DeleteButton from './DeleteButton';
+import Swipeable from 'react-native-swipeable-row';
+import CredentialManager from '../Services/credentialManager';
 
 export default class Credential extends Component {
   handleReturnUrl() {
@@ -13,21 +16,28 @@ export default class Credential extends Component {
     openURL(this.props.returnUrl, query);
   }
 
+  handleDelete() {
+    const credentialManager = new CredentialManager();
+    credentialManager.deleteCredential(this.props.credential.signature);
+  }
+
+  leftContent = [<DeleteButton handleDelete={() => this.handleDelete()} />];
+
   createClaimsList() {
     let claims = [];
-    for (let claim of this.props.credential.claims) {
+    this.props.credential.claims.forEach((claim, i) => {
       claims.push(
-        <Text note>
+        <Text note key={i}>
           {claim.key}: {claim.value}
         </Text>,
       );
-    }
+    });
     return claims;
   }
 
   render() {
     return (
-      <>
+      <Swipeable leftButtons={this.leftContent}>
         <Card>
           <CardItem header bordered>
             <Text>Credential</Text>
@@ -55,7 +65,7 @@ export default class Credential extends Component {
             </CardItem>
           ) : null}
         </Card>
-      </>
+      </Swipeable>
     );
   }
 }

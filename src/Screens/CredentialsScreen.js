@@ -35,6 +35,10 @@ export default class CredentialsScreen extends Component {
     }
   }
 
+  componentWillUnmount() {
+    this.credentialManager.unsubscribe(this.updateCredentials);
+  }
+
   updateCredentials() {
     this.setState({
       credentials: this.credentialManager.getCredentials(
@@ -43,18 +47,27 @@ export default class CredentialsScreen extends Component {
     });
   }
 
+  createNavigation() {
+    return (
+      <Button transparent>
+        <Icon
+          name="arrow-back"
+          onPress={() =>
+            this.props.navigation.getParam('did', undefined)
+              ? this.props.navigation.pop()
+              : this.props.navigation.popToTop()
+          }
+        />
+      </Button>
+    );
+  }
+
   render() {
+    console.log(this.state.credentials);
     return (
       <Container>
         <Header>
-          <Left>
-            <Button transparent>
-              <Icon
-                name="arrow-back"
-                onPress={() => this.props.navigation.popToTop()}
-              />
-            </Button>
-          </Left>
+          <Left>{this.createNavigation()}</Left>
           <Body>
             <Title>
               {this.props.navigation.getParam('returnUrl', undefined)

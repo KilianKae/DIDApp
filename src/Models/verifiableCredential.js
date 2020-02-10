@@ -1,14 +1,12 @@
 import {decodeJWT} from 'did-jwt';
 
 export default class VerifiableCredential {
-  id;
   claims;
   subject;
   signature;
   issuer;
 
   constructor({claims, subject, issuer, signature}) {
-    this.id = (Date.now() + Math.floor(Math.random() * 100)).toString(16);
     this.claims = claims;
     this.subject = subject;
     this.signature = signature;
@@ -43,14 +41,5 @@ export default class VerifiableCredential {
       //TODO more sophisticated sort
       credential.claims[0].value == this.claims[0].value
     );
-  }
-
-  toJSON() {
-    return {
-      claims: this.claims,
-      subject: this.subject,
-      issuer: this.issuer,
-      signature: this.signature,
-    };
   }
 }

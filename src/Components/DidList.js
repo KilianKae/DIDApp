@@ -8,6 +8,7 @@ export default class DidList extends Component {
     for (const ethrDid of this.props.dids) {
       listItems.push(
         <Did
+          key={ethrDid.did}
           ethrDid={ethrDid}
           navigation={this.props.navigation}
           requestToken={this.props.requestToken}
@@ -18,7 +19,6 @@ export default class DidList extends Component {
     return listItems;
   }
 
-  //TODO nicer laoding indicator/request indicator
   render() {
     return this.createListItems();
   }

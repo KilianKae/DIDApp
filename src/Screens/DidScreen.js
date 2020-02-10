@@ -1,11 +1,10 @@
 import React from 'react';
+import {ActivityIndicator} from 'react-native';
 import {
   Container,
   Header,
   Title,
   Content,
-  Footer,
-  FooterTab,
   Button,
   Left,
   Right,
@@ -96,7 +95,7 @@ export default class DidScreen extends React.Component {
         </Header>
         <Content padder>
           {this.state.loading ? (
-            <Text onPress={this.updateDids}>Loading...</Text>
+            <ActivityIndicator size="large" color="#0A60FF" />
           ) : null}
           {this.state.siopRequest ? (
             <DidList
@@ -112,13 +111,6 @@ export default class DidScreen extends React.Component {
             />
           )}
         </Content>
-        <Footer>
-          <FooterTab>
-            <Button full>
-              <Text>Footer</Text>
-            </Button>
-          </FooterTab>
-        </Footer>
       </Container>
     );
   }

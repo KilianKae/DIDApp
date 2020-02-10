@@ -1,5 +1,5 @@
 import VerifiableCredential from '../Models/verifiableCredential';
-import {saveCredential, getCredentials} from './asyncStorage';
+import {saveCredential, getCredentials, deleteCredential} from './asyncStorage';
 
 export default class CredentialManager {
   handlers = [];
@@ -51,6 +51,14 @@ export default class CredentialManager {
         })
         .catch(error => console.error(error));
     }
+  }
+
+  deleteCredential(signature) {
+    this.credentials = this.credentials.filter(
+      credential => credential.signature != signature,
+    );
+    deleteCredential(signature);
+    this.publish();
   }
 
   getCredentials(did) {

@@ -1,7 +1,6 @@
 import AsyncStorage from '@react-native-community/async-storage';
 import VerifiableCredential from '../Models/verifiableCredential';
 
-//TODO async keystore - async ()?
 export const saveKeystore = async keystore => {
   try {
     let keystores = await getKeystores();
@@ -24,6 +23,17 @@ export const getKeystores = async () => {
   return keystores;
 };
 
+export const deleteKeystore = async did => {
+  try {
+    let keystores = await getKeystores();
+    keystores = keystores.filter(keystore => keystore.address != did);
+    const keystoresString = JSON.stringify(keystores);
+    await AsyncStorage.setItem('keystores', keystoresString);
+  } catch (error) {
+    console.error(error.message);
+  }
+};
+
 export const saveCredential = async credential => {
   try {
     let credentials = await getCredentials();
@@ -39,11 +49,24 @@ export const getCredentials = async () => {
   let credentials = [];
   try {
     let credentialsString = (await AsyncStorage.getItem('credentials')) || '[]';
-    console.log('sdsadaffas', credentialsString);
-    credentials = JSON.parse(credentialsString);
-    credentials.map(crd => new VerifiableCredential(crd));
+    credentials = JSON.parse(credentialsString).map(
+      credential => new VerifiableCredential(credential),
+    );
   } catch (error) {
     console.error(error.message);
   }
   return credentials;
+};
+
+export const deleteCredential = async signature => {
+  try {
+    let credentials = await getCredentials();
+    credentials = credentials.filter(
+      credential => credential.signature != signature,
+    );
+    const credentialsString = JSON.stringify(credentials);
+    await AsyncStorage.setItem('credentials', credentialsString);
+  } catch (error) {
+    console.error(error.message);
+  }
 };

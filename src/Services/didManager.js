@@ -1,6 +1,6 @@
 import HttpProvider from 'ethjs-provider-http';
 import EthrDid from './ethrDid';
-import {saveKeystore, getKeystores} from './asyncStorage';
+import {saveKeystore, getKeystores, deleteKeystore} from './asyncStorage';
 
 const endPoints = {
   mainnet: 'https://mainnet.infura.io/v3/ab803204cb9b49adb488de9dd5a06ad9',
@@ -70,6 +70,12 @@ export default class DIDManager {
     }
     let ethrDid = new EthrDid(account);
     this.ethrDids.push(ethrDid);
+    this.publish();
+  }
+
+  deleteEthrAccount(address) {
+    this.ethrDids = this.ethrDids.filter(ethrDid => ethrDid.address != address);
+    deleteKeystore(address);
     this.publish();
   }
 

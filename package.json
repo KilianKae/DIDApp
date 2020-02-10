@@ -44,6 +44,7 @@
     "react-native-os": "^1.2.6",
     "react-native-randombytes": "^3.5.3",
     "react-native-safe-area-context": "^0.6.2",
+    "react-native-swipeable-row": "^0.8.1",
     "react-native-tcp": "^3.3.2",
     "react-native-udp": "^2.6.1",
     "react-navigation": "^4.0.10",

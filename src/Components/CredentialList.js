@@ -10,6 +10,7 @@ export default class CredentialList extends Component {
           key={i}
           credential={credential}
           returnUrl={this.props.returnUrl}
+          returnCallback={this.props.returnCallback}
         />,
       );
     });

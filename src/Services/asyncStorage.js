@@ -37,7 +37,7 @@ export const deleteKeystore = async did => {
 export const saveCredential = async credential => {
   try {
     let credentials = await getCredentials();
-    credentials.push(credential.toJSON());
+    credentials.push(credential);
     const credentialsString = JSON.stringify(credentials);
     await AsyncStorage.setItem('credentials', credentialsString);
   } catch (error) {

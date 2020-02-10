@@ -15,6 +15,7 @@ export default class Did extends Component {
         openURL(this.props.client_id + '/siopResponse', {
           id_token,
         });
+        this.props.authenthicationCallback();
       })
       .catch(err => console.error('[Did] An error occurred', err));
   }

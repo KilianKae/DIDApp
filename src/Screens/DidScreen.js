@@ -10,7 +10,6 @@ import {
   Right,
   Body,
   Icon,
-  Text,
 } from 'native-base';
 import DidList from '../Components/DidList';
 import DIDManager from '../Services/didManager';
@@ -18,30 +17,13 @@ import DIDManager from '../Services/didManager';
 export default class DidScreen extends React.Component {
   constructor(props) {
     super(props);
-    let siopRequest = undefined;
-    if (this.props.navigation.getParam('response_type', undefined)) {
-      siopRequest = {
-        response_type: this.props.navigation.getParam(
-          'response_type',
-          undefined,
-        ),
-        client_id: this.props.navigation.getParam('client_id', undefined),
-        scope: this.props.navigation.getParam('scope', undefined),
-        requestToken: this.props.navigation.getParam('request', undefined),
-      };
-    }
-
     this.state = {
-      siopRequest: siopRequest,
+      siopRequest: () => this.processSIOPrequest(),
       dids: [],
       loading: true,
     };
-
     this.updateDids = this.updateDids.bind(this);
     this.didManager = new DIDManager();
-    console.log('[DidScreen] requestToken', this.state.requestToken);
-    console.log('[DidScreen] client_id', this.state.client_id);
-    console.log('[DidScreen] Received siopRequest', this.state.siopRequest);
   }
 
   componentDidMount() {
@@ -51,7 +33,36 @@ export default class DidScreen extends React.Component {
   }
 
   componentWillUnmount() {
+    console.log('[DidScreen] WillUnmount');
     this.didManager.unsubscribe(this.updateDids);
+  }
+
+  componentDidUpdate() {
+    console.log('[DidScreen] DidUpdate');
+  }
+
+  processSIOPrequest() {
+    let siopRequest = null;
+    const navigation = this.props.navigation;
+    if (navigation.getParam('response_type', null)) {
+      siopRequest = {
+        response_type: navigation.getParam('response_type', null),
+        client_id: navigation.getParam('client_id', null),
+        scope: navigation.getParam('scope', null),
+        requestToken: navigation.getParam('request', null),
+      };
+      console.log('[DidScreen] Received siopRequest', siopRequest);
+    }
+    return siopRequest;
+  }
+
+  resetNavigationParams() {
+    this.props.navigation.setParams({
+      response_type: undefined,
+      client_id: undefined,
+      scope: undefined,
+      requestToken: undefined,
+    });
   }
 
   updateDids() {
@@ -70,21 +81,23 @@ export default class DidScreen extends React.Component {
     didManager.newEthrDid();
   }
 
+  handleBack() {
+    this.props.navigation.popToTop();
+    this.resetNavigationParams();
+  }
+
   render() {
     return (
       <Container>
         <Header>
           <Left>
             <Button transparent>
-              <Icon
-                name="arrow-back"
-                onPress={() => this.props.navigation.popToTop()}
-              />
+              <Icon name="arrow-back" onPress={() => this.handleBack()} />
             </Button>
           </Left>
           <Body>
             <Title>
-              {this.state.siopRequest ? 'Select DID' : 'Identifier'}
+              {this.state.siopRequest() ? 'Select DID' : 'Identifier'}
             </Title>
           </Body>
           <Right>
@@ -97,12 +110,13 @@ export default class DidScreen extends React.Component {
           {this.state.loading ? (
             <ActivityIndicator size="large" color="#0A60FF" />
           ) : null}
-          {this.state.siopRequest ? (
+          {this.state.siopRequest() ? (
             <DidList
               dids={this.state.dids}
-              client_id={this.state.siopRequest.client_id}
-              requestToken={this.state.siopRequest.requestToken}
+              client_id={this.state.siopRequest().client_id}
+              requestToken={this.state.siopRequest().requestToken}
               navigation={this.props.navigation}
+              authenthicationCallback={() => this.resetNavigationParams()}
             />
           ) : (
             <DidList

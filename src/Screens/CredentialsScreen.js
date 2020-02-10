@@ -29,14 +29,31 @@ export default class CredentialsScreen extends Component {
     console.log('[CredentialsScreen] Did mount');
     this.credentialManager.subscribe(this.updateCredentials);
     this.credentialManager.importFromStorage();
-    const importedJWT = this.props.navigation.getParam('credential', undefined);
-    if (importedJWT) {
-      this.credentialManager.addCredentialFromJWT(importedJWT);
-    }
+    this.processCredentialParam();
   }
 
   componentWillUnmount() {
     this.credentialManager.unsubscribe(this.updateCredentials);
+  }
+
+  componentDidUpdate() {
+    this.processCredentialParam();
+  }
+
+  resetCredentialParam() {
+    this.props.navigation.setParams({credential: undefined});
+  }
+
+  resetReturnParams() {
+    this.props.navigation.setParams({returnUrl: undefined});
+  }
+
+  processCredentialParam() {
+    const importedJWT = this.props.navigation.getParam('credential', null);
+    if (importedJWT) {
+      this.credentialManager.addCredentialFromJWT(importedJWT);
+      this.resetCredentialParam();
+    }
   }
 
   updateCredentials() {
@@ -53,7 +70,7 @@ export default class CredentialsScreen extends Component {
         <Icon
           name="arrow-back"
           onPress={() =>
-            this.props.navigation.getParam('did', undefined)
+            this.props.navigation.getParam('did', null)
               ? this.props.navigation.pop()
               : this.props.navigation.popToTop()
           }
@@ -70,7 +87,7 @@ export default class CredentialsScreen extends Component {
           <Left>{this.createNavigation()}</Left>
           <Body>
             <Title>
-              {this.props.navigation.getParam('returnUrl', undefined)
+              {this.props.navigation.getParam('returnUrl', null)
                 ? 'Select Credential'
                 : 'Credentials'}
             </Title>
@@ -81,6 +98,7 @@ export default class CredentialsScreen extends Component {
           <CredentialList
             credentials={this.state.credentials}
             returnUrl={this.props.navigation.getParam('returnUrl', undefined)}
+            returnCallback={() => this.resetReturnParams()}
           />
         </Content>
       </Container>

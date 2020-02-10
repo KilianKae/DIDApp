@@ -14,6 +14,7 @@ export default class Credential extends Component {
       claims: JSON.stringify(this.props.credential.claims),
     };
     openURL(this.props.returnUrl, query);
+    this.props.returnCallback();
   }
 
   handleDelete() {

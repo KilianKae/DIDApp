@@ -11,6 +11,7 @@ import {
   Body,
   Icon,
 } from 'native-base';
+import LoginModal from '../Components/LoginModal';
 import DidList from '../Components/DidList';
 import DIDManager from '../Services/didManager';
 
@@ -88,44 +89,47 @@ export default class DidScreen extends React.Component {
 
   render() {
     return (
-      <Container>
-        <Header>
-          <Left>
-            <Button transparent>
-              <Icon name="arrow-back" onPress={() => this.handleBack()} />
-            </Button>
-          </Left>
-          <Body>
-            <Title>
-              {this.state.siopRequest() ? 'Select DID' : 'Identifier'}
-            </Title>
-          </Body>
-          <Right>
-            <Button transparent>
-              <Icon name="add" onPress={this.newEthrDid} />
-            </Button>
-          </Right>
-        </Header>
-        <Content padder>
-          {this.state.loading ? (
-            <ActivityIndicator size="large" color="#0A60FF" />
-          ) : null}
-          {this.state.siopRequest() ? (
-            <DidList
-              dids={this.state.dids}
-              client_id={this.state.siopRequest().client_id}
-              requestToken={this.state.siopRequest().requestToken}
-              navigation={this.props.navigation}
-              authenthicationCallback={() => this.resetNavigationParams()}
-            />
-          ) : (
-            <DidList
-              dids={this.state.dids}
-              navigation={this.props.navigation}
-            />
-          )}
-        </Content>
-      </Container>
+      <>
+        <LoginModal />
+        <Container>
+          <Header>
+            <Left>
+              <Button transparent>
+                <Icon name="arrow-back" onPress={() => this.handleBack()} />
+              </Button>
+            </Left>
+            <Body>
+              <Title>
+                {this.state.siopRequest() ? 'Select DID' : 'Identifier'}
+              </Title>
+            </Body>
+            <Right>
+              <Button transparent>
+                <Icon name="add" onPress={this.newEthrDid} />
+              </Button>
+            </Right>
+          </Header>
+          <Content padder>
+            {this.state.loading ? (
+              <ActivityIndicator size="large" color="#0A60FF" />
+            ) : null}
+            {this.state.siopRequest() ? (
+              <DidList
+                dids={this.state.dids}
+                client_id={this.state.siopRequest().client_id}
+                requestToken={this.state.siopRequest().requestToken}
+                navigation={this.props.navigation}
+                authenthicationCallback={() => this.resetNavigationParams()}
+              />
+            ) : (
+              <DidList
+                dids={this.state.dids}
+                navigation={this.props.navigation}
+              />
+            )}
+          </Content>
+        </Container>
+      </>
     );
   }
 }

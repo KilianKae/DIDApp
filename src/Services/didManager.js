@@ -1,18 +1,17 @@
 import HttpProvider from 'ethjs-provider-http';
 import EthrDid from './ethrDid';
 import {saveKeystore, getKeystores, deleteKeystore} from './asyncStorage';
+import {decryptKeystore, encryptKeystore} from './authService';
 
 const endPoints = {
   mainnet: 'https://mainnet.infura.io/v3/ab803204cb9b49adb488de9dd5a06ad9',
   testnet: 'https://rinkeby.infura.io/v3/de303f7185894e5a862e7482da6e398d',
 };
 
-//TODO Add PW encryption
-
 export default class DIDManager {
   handlers = []; // observers
   ethrDids = [];
-  provider = undefined;
+  provider;
   didsLoaded = false;
 
   constructor() {
@@ -42,14 +41,24 @@ export default class DIDManager {
     this.handlers.forEach(fn => fn.call());
   }
 
+  // Import keystores from async storage
   importFromStorage() {
     if (this.didsLoaded) {
       this.publish();
     } else {
       getKeystores()
         .then(keystores => {
-          for (keystore of keystores) {
-            this.addEthrAccount(keystore, false);
+          keystores.forEach(keystore => {
+            const decryptResult = decryptKeystore(keystore);
+            if (decryptResult.success) {
+              this.addEthrAccount(decryptResult.account, false);
+            } else {
+              //TODO
+              alert('Incorect Password');
+            }
+          });
+          if (keystores.length === 0) {
+            this.publish();
           }
           this.didsLoaded = true;
         })
@@ -59,16 +68,17 @@ export default class DIDManager {
 
   newEthrDid() {
     console.log('[DidManager] Creating new keypair');
-    const account = EthrDid.createKeyPair();
-    this.addEthrAccount(account, true);
+    const keystore = EthrDid.createKeyPair();
+    this.addEthrAccount(keystore, true);
   }
 
-  addEthrAccount(account, store) {
-    console.log('[DidManager] account', account);
+  addEthrAccount(keystore, store) {
+    console.log('[DidManager] account', keystore);
+    let ethrDid = new EthrDid(keystore);
     if (store) {
-      saveKeystore(account);
+      keystore = encryptKeystore(keystore);
+      saveKeystore(keystore);
     }
-    let ethrDid = new EthrDid(account);
     this.ethrDids.push(ethrDid);
     this.publish();
   }

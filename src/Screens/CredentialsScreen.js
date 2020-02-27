@@ -10,6 +10,7 @@ import {
   Button,
   Icon,
 } from 'native-base';
+import LoginModal from '../Components/LoginModal';
 import CredentialList from '../Components/CredentialList';
 import CredentialManager from '../Services/credentialManager';
 
@@ -82,26 +83,28 @@ export default class CredentialsScreen extends Component {
   render() {
     console.log(this.state.credentials);
     return (
-      <Container>
-        <Header>
-          <Left>{this.createNavigation()}</Left>
-          <Body>
-            <Title>
-              {this.props.navigation.getParam('returnUrl', null)
-                ? 'Select Credential'
-                : 'Credentials'}
-            </Title>
-          </Body>
-          <Right />
-        </Header>
-        <Content padder>
-          <CredentialList
-            credentials={this.state.credentials}
-            returnUrl={this.props.navigation.getParam('returnUrl', undefined)}
-            returnCallback={() => this.resetReturnParams()}
-          />
-        </Content>
-      </Container>
+      <>
+        <Container>
+          <Header>
+            <Left>{this.createNavigation()}</Left>
+            <Body>
+              <Title>
+                {this.props.navigation.getParam('returnUrl', null)
+                  ? 'Select Credential'
+                  : 'Credentials'}
+              </Title>
+            </Body>
+            <Right />
+          </Header>
+          <Content padder>
+            <CredentialList
+              credentials={this.state.credentials}
+              returnUrl={this.props.navigation.getParam('returnUrl', undefined)}
+              returnCallback={() => this.resetReturnParams()}
+            />
+          </Content>
+        </Container>
+      </>
     );
   }
 }

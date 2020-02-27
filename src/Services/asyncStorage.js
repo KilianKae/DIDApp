@@ -70,3 +70,21 @@ export const deleteCredential = async signature => {
     console.error(error.message);
   }
 };
+
+export const savePassword = async password => {
+  try {
+    await AsyncStorage.setItem('password', password);
+  } catch (error) {
+    console.error(error.message);
+  }
+};
+
+export const getPassword = async () => {
+  let password = '';
+  try {
+    password = (await AsyncStorage.getItem('password')) || '';
+  } catch (error) {
+    console.error(error.message);
+  }
+  return password;
+};

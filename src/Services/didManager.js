@@ -1,7 +1,12 @@
 import HttpProvider from 'ethjs-provider-http';
 import EthrDid from './ethrDid';
 import {saveKeystore, getKeystores, deleteKeystore} from './asyncStorage';
-import {decryptKeystore, encryptKeystore} from './authService';
+import {
+  decryptKeystore,
+  encryptKeystore,
+  isAuthentified,
+  subscribe,
+} from './authService';
 
 const endPoints = {
   mainnet: 'https://mainnet.infura.io/v3/ab803204cb9b49adb488de9dd5a06ad9',
@@ -45,25 +50,31 @@ export default class DIDManager {
   importFromStorage() {
     if (this.didsLoaded) {
       this.publish();
+    } else if (isAuthentified()) {
+      this.importKeystores();
     } else {
-      getKeystores()
-        .then(keystores => {
-          keystores.forEach(keystore => {
-            const decryptResult = decryptKeystore(keystore);
-            if (decryptResult.success) {
-              this.addEthrAccount(decryptResult.account, false);
-            } else {
-              //TODO
-              alert('Incorect Password');
-            }
-          });
-          if (keystores.length === 0) {
-            this.publish();
-          }
-          this.didsLoaded = true;
-        })
-        .catch(error => console.error(error));
+      subscribe(() => this.importKeystores());
     }
+  }
+
+  importKeystores() {
+    getKeystores()
+      .then(keystores => {
+        keystores.forEach(keystore => {
+          const decryptResult = decryptKeystore(keystore);
+          if (decryptResult.success) {
+            this.addEthrAccount(decryptResult.account, false);
+          } else {
+            //TODO
+            alert('Incorect Password');
+          }
+        });
+        if (keystores.length === 0) {
+          this.publish();
+        }
+        this.didsLoaded = true;
+      })
+      .catch(error => console.error(error));
   }
 
   newEthrDid() {

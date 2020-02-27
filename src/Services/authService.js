@@ -1,10 +1,31 @@
 import CryptoJS from 'crypto-js';
 import {getPassword, savePassword} from './asyncStorage';
 
-let password = '';
+let password;
+let observers = [];
+
+// Add observer for password
+export const subscribe = fn => {
+  observers.push(fn);
+};
+
+// Remove observer for password
+export const unsubscribe = fn => {
+  observers = observers.filter(function(item) {
+    if (item !== fn) {
+      return item;
+    }
+  });
+};
+
+// Puplish password change
+const publish = () => {
+  observers.forEach(fn => fn.call());
+  observers = [];
+};
 
 export const isAuthentified = () => {
-  return !(password == '');
+  return Boolean(password);
 };
 
 export const isPasswordSet = () => {
@@ -17,6 +38,7 @@ export const isPasswordSet = () => {
 
 export const setPassword = key => {
   password = key;
+  publish();
   savePassword(key);
 };
 
@@ -25,6 +47,7 @@ export const login = key => {
     .then(isValid => {
       if (isValid) {
         password = key;
+        publish();
         return true;
       } else {
         return false;

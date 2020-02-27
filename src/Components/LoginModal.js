@@ -1,5 +1,5 @@
 import React from 'react';
-import {Modal, Alert} from 'react-native';
+import {Modal} from 'react-native';
 import {
   Text,
   Form,
@@ -15,6 +15,7 @@ import {
   isPasswordSet,
   login,
   isAuthentified,
+  subscribe,
 } from '../Services/authService';
 
 export default class LoginModal extends React.Component {
@@ -34,6 +35,7 @@ export default class LoginModal extends React.Component {
         this.setState({buttonText: isSet ? 'Login' : 'Set Password'});
       })
       .catch(error => console.error(error));
+    subscribe(() => this.setInvisible());
   }
 
   handlePasswordSubmission() {
@@ -42,7 +44,7 @@ export default class LoginModal extends React.Component {
       login(this.state.password)
         .then(isValid => {
           if (isValid) {
-            this.setState({visible: false});
+            this.setInvisible();
           } else {
             this.setState({error: true});
           }
@@ -52,7 +54,10 @@ export default class LoginModal extends React.Component {
       setPassword(this.state.password);
       this.setState({visible: false});
     }
-    //this.props.navigation.navigate('Dids');
+  }
+
+  setInvisible() {
+    this.setState({visible: false});
   }
 
   render() {
@@ -60,11 +65,15 @@ export default class LoginModal extends React.Component {
       <Modal
         animationType="none"
         transparent={false}
-        visible={this.state.visible}
-        onRequestClose={() => {
-          Alert.alert('Modal has been closed.');
-        }}>
-        <Card style={{top: '25%'}}>
+        visible={this.state.visible}>
+        <Card style={{top: '25%', marginLeft: 15, marginRight: 15}}>
+          <CardItem
+            header
+            button
+            bordered
+            onPress={() => this.props.navigation.navigate('Dids')}>
+            <Text>DID Wallet Login</Text>
+          </CardItem>
           <CardItem bordered>
             <Form style={{width: '100%'}}>
               <Item

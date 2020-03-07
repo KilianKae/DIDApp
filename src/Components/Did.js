@@ -12,7 +12,7 @@ export default class Did extends Component {
       .generateSiopResponse(this.props.requestToken)
       .then(id_token => {
         console.log('[Did] Generated SIOP response token', id_token);
-        openURL(this.props.client_id + '/siopResponse', {
+        openURL(this.props.client_id, {
           id_token,
         });
         this.props.authenthicationCallback();

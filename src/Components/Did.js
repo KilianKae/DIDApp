@@ -4,6 +4,7 @@ import Swipeable from 'react-native-swipeable-row';
 import {openURL} from '../Services/browserLinking';
 import DIDManager from '../Services/didManager';
 import DeleteButton from './DeleteButton';
+import {stringToColour} from '../Services/colorService';
 
 export default class Did extends Component {
   handelSIOPRequest() {
@@ -65,7 +66,13 @@ export default class Did extends Component {
     return (
       <Swipeable leftButtons={this.leftContent}>
         <Card>
-          <CardItem header bordered>
+          <CardItem
+            header
+            bordered
+            style={{
+              borderTopColor: stringToColour(this.props.ethrDid.did),
+              borderTopWidth: 2,
+            }}>
             <Text>DID</Text>
           </CardItem>
           <CardItem bordered>

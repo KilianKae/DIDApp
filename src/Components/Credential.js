@@ -4,6 +4,7 @@ import {openURL} from '../Services/browserLinking';
 import DeleteButton from './DeleteButton';
 import Swipeable from 'react-native-swipeable-row';
 import CredentialManager from '../Services/credentialManager';
+import {stringToColour} from '../Services/colorService';
 
 export default class Credential extends Component {
   handleReturnUrl() {
@@ -40,7 +41,13 @@ export default class Credential extends Component {
     return (
       <Swipeable leftButtons={this.leftContent}>
         <Card>
-          <CardItem header bordered>
+          <CardItem
+            header
+            bordered
+            style={{
+              borderTopColor: stringToColour(this.props.credential.subject),
+              borderTopWidth: 2,
+            }}>
             <Text>Credential</Text>
           </CardItem>
           <CardItem bordered>

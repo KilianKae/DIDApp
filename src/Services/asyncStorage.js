@@ -26,7 +26,7 @@ export const getKeystores = async () => {
 export const deleteKeystore = async did => {
   try {
     let keystores = await getKeystores();
-    keystores = keystores.filter(keystore => keystore.address != did);
+    keystores = keystores.filter(keystore => keystore.address !== did);
     const keystoresString = JSON.stringify(keystores);
     await AsyncStorage.setItem('keystores', keystoresString);
   } catch (error) {

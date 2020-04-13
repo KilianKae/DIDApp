@@ -1,8 +1,8 @@
 platform :ios, '9.0'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
-target 'DIDApp' do
-  # Pods for DIDApp
+target 'DIDWallet' do
+  # Pods for DIDWallet
   pod 'FBLazyVector', :path => "../node_modules/react-native/Libraries/FBLazyVector"
   pod 'FBReactNativeSpec', :path => "../node_modules/react-native/Libraries/FBReactNativeSpec"
   pod 'RCTRequired', :path => "../node_modules/react-native/Libraries/RCTRequired"
@@ -26,7 +26,7 @@ target 'DIDApp' do
   pod 'React-jsi', :path => '../node_modules/react-native/ReactCommon/jsi'
   pod 'React-jsiexecutor', :path => '../node_modules/react-native/ReactCommon/jsiexecutor'
   pod 'React-jsinspector', :path => '../node_modules/react-native/ReactCommon/jsinspector'
-  pod 'ReactCommon/jscallinvoker', :path => "../node_modules/react-native/ReactCommon"
+  pod 'ReactCommon/callinvoker', :path => "../node_modules/react-native/ReactCommon"
   pod 'ReactCommon/turbomodule/core', :path => "../node_modules/react-native/ReactCommon"
   pod 'Yoga', :path => '../node_modules/react-native/ReactCommon/yoga'
 
@@ -35,7 +35,7 @@ target 'DIDApp' do
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
 
-  target 'DIDAppTests' do
+  target 'DIDWalletTests' do
     inherit! :search_paths
     # Pods for testing
   end
@@ -43,10 +43,10 @@ target 'DIDApp' do
   use_native_modules!
 end
 
-target 'DIDApp-tvOS' do
-  # Pods for DIDApp-tvOS
+target 'DIDWallet-tvOS' do
+  # Pods for DIDWallet-tvOS
 
-  target 'DIDApp-tvOSTests' do
+  target 'DIDWallet-tvOSTests' do
     inherit! :search_paths
     # Pods for testing
   end

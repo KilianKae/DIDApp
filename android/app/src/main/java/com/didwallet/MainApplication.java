@@ -1,4 +1,4 @@
-package com.didapp;
+package com.didwalletwallet;
 
 import android.app.Application;
 import android.content.Context;

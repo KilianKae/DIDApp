@@ -33,7 +33,7 @@ export default class HomeScreen extends React.Component {
                 button
                 bordered
                 onPress={() => this.props.navigation.navigate('Dids')}>
-                <Text>Indentifiers</Text>
+                <Text>Identifiers</Text>
               </CardItem>
             </Card>
             <Card>

@@ -61,6 +61,21 @@ export default class Did extends Component {
     }
   }
 
+  createUsedWithLine() {
+    console.log(this.props.ethrDid.associatedServices);
+    if (this.props.ethrDid.associatedServices.length) {
+      return (
+        <CardItem bordered button>
+          <Body>
+            <Text>
+              Used with: {this.props.ethrDid.associatedServices.join(' | ')}
+            </Text>
+          </Body>
+        </CardItem>
+      );
+    }
+  }
+
   render() {
     //TODO
     return (
@@ -80,6 +95,7 @@ export default class Did extends Component {
               <Text>{this.props.ethrDid.did}</Text>
             </Body>
           </CardItem>
+          {this.createUsedWithLine()}
           {this.createSecondLine()}
         </Card>
       </Swipeable>

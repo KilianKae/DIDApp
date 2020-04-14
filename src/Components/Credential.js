@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {StyleSheet} from 'react-native';
 import {Text, Card, CardItem, Body, Right, Icon} from 'native-base';
 import {openURL} from '../Services/browserLinking';
 import DeleteButton from './DeleteButton';
@@ -41,13 +42,7 @@ export default class Credential extends Component {
     return (
       <Swipeable leftButtons={this.leftContent}>
         <Card>
-          <CardItem
-            header
-            bordered
-            style={{
-              borderTopColor: stringToColour(this.props.credential.subject),
-              borderTopWidth: 2,
-            }}>
+          <CardItem header bordered style={this.styles.credentialColor}>
             <Text>Credential</Text>
           </CardItem>
           <CardItem bordered>
@@ -76,4 +71,10 @@ export default class Credential extends Component {
       </Swipeable>
     );
   }
+  styles = StyleSheet.create({
+    credentialColor: {
+      borderTopColor: stringToColour(this.props.credential.subject),
+      borderTopWidth: 2,
+    },
+  });
 }

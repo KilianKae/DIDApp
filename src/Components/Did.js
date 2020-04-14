@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {StyleSheet} from 'react-native';
 import {Text, Card, CardItem, Body, Right, Icon} from 'native-base';
 import Swipeable from 'react-native-swipeable-row';
 import {openURL} from '../Services/browserLinking';
@@ -43,10 +44,7 @@ export default class Did extends Component {
           'http://localhost:8080/institution/b/auth/siopResponse' &&
           this.props.ethrDid.associatedServices.includes('Institution B'))
       ) {
-        textStyle = {
-          color: '#0a60ff',
-          fontWeight: 'bold',
-        };
+        textStyle = this.styles.authenticationHighlight;
       }
     }
     return textStyle;
@@ -104,13 +102,7 @@ export default class Did extends Component {
     return (
       <Swipeable leftButtons={this.leftContent}>
         <Card>
-          <CardItem
-            header
-            bordered
-            style={{
-              borderTopColor: stringToColour(this.props.ethrDid.did),
-              borderTopWidth: 2,
-            }}>
+          <CardItem header bordered style={this.styles.didCardItem}>
             <Text>DID</Text>
           </CardItem>
           <CardItem bordered>
@@ -124,4 +116,15 @@ export default class Did extends Component {
       </Swipeable>
     );
   }
+
+  styles = StyleSheet.create({
+    authenticationHighlight: {
+      color: '#0a60ff',
+      fontWeight: 'bold',
+    },
+    didCardItem: {
+      borderTopColor: stringToColour(this.props.ethrDid.did),
+      borderTopWidth: 2,
+    },
+  });
 }

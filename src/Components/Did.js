@@ -7,6 +7,10 @@ import DeleteButton from './DeleteButton';
 import {stringToColour} from '../Services/colorService';
 
 export default class Did extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {cardStyle: {}};
+  }
   handelSIOPRequest() {
     console.log('[Did] Generating SIOP Response');
     this.props.ethrDid
@@ -28,15 +32,34 @@ export default class Did extends Component {
 
   leftContent = [<DeleteButton handleDelete={() => this.handleDelete()} />];
 
+  textStyle() {
+    let textStyle = {};
+    if (this.props.requestToken) {
+      if (
+        (this.props.client_id ===
+          'http://localhost:8080/institution/a/auth/siopResponse' &&
+          this.props.ethrDid.associatedServices.includes('Institution A')) ||
+        (this.props.client_id ===
+          'http://localhost:8080/institution/b/auth/siopResponse' &&
+          this.props.ethrDid.associatedServices.includes('Institution B'))
+      ) {
+        textStyle = {
+          color: '#0a60ff',
+          fontWeight: 'bold',
+        };
+      }
+    }
+    return textStyle;
+  }
   createSecondLine() {
     if (this.props.requestToken) {
       return (
         <CardItem bordered button onPress={() => this.handelSIOPRequest()}>
           <Body>
-            <Text>Authenticate</Text>
+            <Text style={this.textStyle()}>Authenticate</Text>
           </Body>
           <Right>
-            <Icon name="arrow-forward" />
+            <Icon style={this.textStyle()} name="arrow-forward" />
           </Right>
         </CardItem>
       );

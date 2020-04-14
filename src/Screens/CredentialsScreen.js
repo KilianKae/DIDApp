@@ -84,6 +84,7 @@ export default class CredentialsScreen extends Component {
     console.log(this.state.credentials);
     return (
       <>
+        <LoginModal />
         <Container>
           <Header>
             <Left>{this.createNavigation()}</Left>

@@ -2,12 +2,14 @@
 import {decodeJWT} from 'did-jwt';
 
 export default class VerifiableCredential {
+  type;
   claims;
   subject;
   signature;
   issuer;
 
-  constructor({claims, subject, issuer, signature}) {
+  constructor({type, claims, subject, issuer, signature}) {
+    this.type = type;
     this.claims = claims;
     this.subject = subject;
     this.signature = signature;
@@ -17,20 +19,20 @@ export default class VerifiableCredential {
   static fromJWT(jwt) {
     //TODO do checks
     const decodedJWT = decodeJWT(jwt);
-    console.log('decodedJWT', decodedJWT);
+    const payload = decodedJWT.payload;
+    console.log('[VC] payload: ', payload);
     let claims = [];
-    for (let [key, value] of Object.entries(
-      decodedJWT.payload.claim.credentialSubject,
-    )) {
+    for (let [key, value] of Object.entries(payload.credentialSubject)) {
       if (key !== 'id') {
         //TODO Claim Model
         claims.push({key, value});
       }
     }
     return new VerifiableCredential({
+      type: payload.type,
       claims,
-      subject: decodedJWT.payload.claim.credentialSubject.id,
-      issuer: decodedJWT.payload.iss,
+      subject: payload.credentialSubject.id,
+      issuer: payload.iss,
       signature: decodedJWT.signature,
     });
   }

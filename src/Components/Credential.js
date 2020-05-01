@@ -26,11 +26,23 @@ export default class Credential extends Component {
 
   leftContent = [<DeleteButton handleDelete={() => this.handleDelete()} />];
 
+  createHeader() {
+    const title = this.props.credential.type.includes('CourseCredential')
+      ? 'Course'
+      : 'Credential';
+    return (
+      <CardItem header bordered style={this.styles.credentialColor}>
+        <Text>{title}</Text>
+      </CardItem>
+    );
+  }
+
   createClaimsList() {
     //{claim.key}: {claim.value}
     let claims = [];
+    console.log(this.props.credential);
     this.props.credential.claims.forEach((claim, i) => {
-      claims.push(<Text key={i}>Introduction to CS</Text>);
+      claims.push(<Text key={i}>{claim.value.id}</Text>);
     });
     return claims;
   }
@@ -39,9 +51,7 @@ export default class Credential extends Component {
     return (
       <Swipeable leftButtons={this.leftContent}>
         <Card>
-          <CardItem header bordered style={this.styles.credentialColor}>
-            <Text>Course</Text>
-          </CardItem>
+          {this.createHeader()}
           <CardItem bordered>
             <Body>{this.createClaimsList()}</Body>
           </CardItem>

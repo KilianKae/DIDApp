@@ -62,7 +62,7 @@ export const deleteCredential = async signature => {
   try {
     let credentials = await getCredentials();
     credentials = credentials.filter(
-      credential => credential.signature != signature,
+      credential => credential.signature !== signature,
     );
     const credentialsString = JSON.stringify(credentials);
     await AsyncStorage.setItem('credentials', credentialsString);

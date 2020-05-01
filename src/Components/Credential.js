@@ -27,13 +27,10 @@ export default class Credential extends Component {
   leftContent = [<DeleteButton handleDelete={() => this.handleDelete()} />];
 
   createClaimsList() {
+    //{claim.key}: {claim.value}
     let claims = [];
     this.props.credential.claims.forEach((claim, i) => {
-      claims.push(
-        <Text note key={i}>
-          {claim.key}: {claim.value}
-        </Text>,
-      );
+      claims.push(<Text key={i}>Introduction to CS</Text>);
     });
     return claims;
   }
@@ -43,19 +40,10 @@ export default class Credential extends Component {
       <Swipeable leftButtons={this.leftContent}>
         <Card>
           <CardItem header bordered style={this.styles.credentialColor}>
-            <Text>Credential</Text>
+            <Text>Course</Text>
           </CardItem>
           <CardItem bordered>
-            <Body>
-              <Text>Subject</Text>
-              <Text note>{this.props.credential.subject}</Text>
-            </Body>
-          </CardItem>
-          <CardItem bordered>
-            <Body>
-              <Text>Claims</Text>
-              {this.createClaimsList()}
-            </Body>
+            <Body>{this.createClaimsList()}</Body>
           </CardItem>
           {this.props.returnUrl ? (
             <CardItem bordered button onPress={() => this.handleReturnUrl()}>

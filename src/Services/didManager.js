@@ -80,18 +80,19 @@ export default class DIDManager {
   newEthrDid() {
     console.log('[DidManager] Creating new keypair');
     const keystore = EthrDid.createKeyPair();
-    this.addEthrAccount(keystore, true);
+    return this.addEthrAccount(keystore, true);
   }
 
   addEthrAccount(keystore, store) {
-    console.log('[DidManager] account', keystore);
-    let ethrDid = new EthrDid(keystore);
+    console.log('[DidManager] adding ether account', keystore.address);
+    const ethrDid = new EthrDid(keystore);
     if (store) {
       keystore = encryptKeystore(keystore);
       saveKeystore(keystore);
     }
     this.ethrDids.push(ethrDid);
     this.publish();
+    return ethrDid;
   }
 
   deleteEthrAccount(address) {

@@ -9,7 +9,7 @@ const secp256k1 = new EC('secp256k1');
 export default class EthrDid extends EthrDID {
   signer;
   jwk;
-  associatedServices = [];
+  associatedService;
 
   constructor({provider, address, privateKey, jwk}) {
     console.log('[EthrDID] New EtherDID');
@@ -73,18 +73,18 @@ export default class EthrDid extends EthrDID {
     return verifiedJWT;
   }
 
-  addAssociatedService(serviceURL) {
-    if (
-      serviceURL === 'http://localhost:8080/institution/a/auth/siopResponse' &&
-      !this.associatedServices.includes('Institution A')
-    ) {
-      this.associatedServices.push('Institution A');
+  addAssociatedService(client_id) {
+    if (client_id === 'http://localhost:8080/institution/a/auth/siopResponse') {
+      this.associatedService = {
+        client_id,
+        name: 'Institution A',
+      };
     }
-    if (
-      serviceURL === 'http://localhost:8080/institution/b/auth/siopResponse' &&
-      !this.associatedServices.includes('Institution B')
-    ) {
-      this.associatedServices.push('Institution B');
+    if (client_id === 'http://localhost:8080/institution/b/auth/siopResponse') {
+      this.associatedService = {
+        client_id,
+        name: 'Institution B',
+      };
     }
   }
 }

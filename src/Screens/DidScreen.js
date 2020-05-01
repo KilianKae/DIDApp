@@ -14,6 +14,8 @@ import {
 import LoginModal from '../Components/LoginModal';
 import DidList from '../Components/DidList';
 import DIDManager from '../Services/didManager';
+import {isAuthentified} from '../Services/authService';
+import {handelSIOPRequest, tokenHandelt} from '../Services/siopService';
 
 export default class DidScreen extends React.Component {
   constructor(props) {
@@ -52,6 +54,21 @@ export default class DidScreen extends React.Component {
         scope: navigation.getParam('scope', null),
         requestToken: navigation.getParam('request', null),
       };
+      if (
+        isAuthentified() &&
+        !tokenHandelt(siopRequest.requestToken) &&
+        !this.didManager.ethrDids.some(
+          did => did.associatedService?.client_id === siopRequest.client_id,
+        )
+      ) {
+        const pairDid = this.newEthrDid();
+        handelSIOPRequest(
+          pairDid,
+          siopRequest.requestToken,
+          siopRequest.client_id,
+          () => this.resetNavigationParams(),
+        );
+      }
       console.log('[DidScreen] Received siopRequest', siopRequest);
     }
     return siopRequest;
@@ -67,19 +84,18 @@ export default class DidScreen extends React.Component {
   }
 
   updateDids() {
-    console.log('[DidScreen] Updating Dids');
+    console.log('[DidScreen] Updating Dids...');
     const dids = this.didManager.getDids();
     this.setState({
       dids,
       loading: false,
     });
-    console.log('[DidScreen] Updating Dids', this.state.dids);
   }
 
   newEthrDid() {
-    console.log('[DidScreen] Creating new Ethr DID');
+    console.log('[DidScreen] Creating new Ethr DID...');
     let didManager = new DIDManager();
-    didManager.newEthrDid();
+    return didManager.newEthrDid();
   }
 
   handleBack() {

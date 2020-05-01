@@ -1,3 +1,4 @@
+/*eslint eqeqeq: ["error", "smart"]*/
 import {decodeJWT} from 'did-jwt';
 
 export default class VerifiableCredential {
@@ -21,7 +22,7 @@ export default class VerifiableCredential {
     for (let [key, value] of Object.entries(
       decodedJWT.payload.claim.credentialSubject,
     )) {
-      if (key != 'id') {
+      if (key !== 'id') {
         //TODO Claim Model
         claims.push({key, value});
       }
@@ -36,10 +37,10 @@ export default class VerifiableCredential {
 
   compare(credential) {
     return (
-      credential.issuer == this.issuer &&
-      credential.subject == this.subject &&
+      credential.issuer === this.issuer &&
+      credential.subject === this.subject &&
       //TODO more sophisticated sort
-      credential.claims[0].value == this.claims[0].value
+      credential.claims[0].value === this.claims[0].value
     );
   }
 }

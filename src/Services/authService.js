@@ -96,5 +96,5 @@ function isValidHmac(encrypted, hmac) {
     encrypted,
     CryptoJS.SHA256(password),
   ).toString();
-  return hmac == decryptedhmac;
+  return hmac === decryptedhmac;
 }

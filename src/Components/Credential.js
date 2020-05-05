@@ -9,14 +9,14 @@ import {stringToColour} from '../Services/colorService';
 
 export default class Credential extends Component {
   handleReturnUrl() {
-    const query = {
-      subject: this.props.credential.subject,
-      issuer: this.props.credential.issuer,
-      signature: this.props.credential.signature,
-      claims: JSON.stringify(this.props.credential.claims),
-    };
-    openURL(this.props.returnUrl, query);
-    this.props.returnCallback();
+    this.props.credential
+      .createVerifiablePresentation(this.props.challenge)
+      .then(vp => {
+        console.log('VP', vp);
+        openURL(this.props.returnUrl, {vp});
+        this.props.returnCallback();
+      })
+      .catch(error => console.error(error));
   }
 
   handleDelete() {

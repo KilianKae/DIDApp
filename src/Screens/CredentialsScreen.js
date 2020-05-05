@@ -47,6 +47,7 @@ export default class CredentialsScreen extends Component {
 
   resetReturnParams() {
     this.props.navigation.setParams({returnUrl: undefined});
+    this.props.navigation.setParams({challenge: undefined});
   }
 
   processCredentialParam() {
@@ -101,6 +102,7 @@ export default class CredentialsScreen extends Component {
             <CredentialList
               credentials={this.state.credentials}
               returnUrl={this.props.navigation.getParam('returnUrl', undefined)}
+              challenge={this.props.navigation.getParam('challenge', undefined)}
               returnCallback={() => this.resetReturnParams()}
             />
           </Content>

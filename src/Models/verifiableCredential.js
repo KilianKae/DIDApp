@@ -1,19 +1,23 @@
 /*eslint eqeqeq: ["error", "smart"]*/
 import {decodeJWT} from 'did-jwt';
+import DIDManager from '../Services/didManager';
 
+const didManager = new DIDManager();
 export default class VerifiableCredential {
   type;
   claims;
   subject;
   signature;
   issuer;
+  iat;
 
-  constructor({type, claims, subject, issuer, signature}) {
+  constructor({type, claims, subject, issuer, signature, iat}) {
     this.type = type;
     this.claims = claims;
     this.subject = subject;
     this.signature = signature;
     this.issuer = issuer;
+    this.iat = iat;
   }
 
   static fromJWT(jwt) {
@@ -34,6 +38,7 @@ export default class VerifiableCredential {
       subject: payload.credentialSubject.id,
       issuer: payload.iss,
       signature: decodedJWT.signature,
+      iat: payload.iat,
     });
   }
 
@@ -44,5 +49,26 @@ export default class VerifiableCredential {
       //TODO more sophisticated sort
       credential.claims[0].value === this.claims[0].value
     );
+  }
+
+  //TODO this could be improved
+  createVerifiablePresentation(challenge) {
+    const subject = didManager.getEthrDid(this.subject);
+    let credentialSubject = {
+      id: this.subject,
+    };
+    this.claims.forEach(claim => (credentialSubject[claim.key] = claim.value));
+    const credential = {
+      type: ['VerifiablePresentation'],
+      challenge,
+      verfiableCredential: {
+        type: ['VerifiableCredential', 'CourseCredential'],
+        credentialSubject,
+        iss: this.issuer,
+        iat: this.iat,
+        signature: this.signature,
+      },
+    };
+    return subject.signJWT(credential);
   }
 }

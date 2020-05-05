@@ -63,7 +63,7 @@ export default class CredentialManager {
 
   getCredentials(did) {
     if (did) {
-      return this.credentials.filter(crd => crd.subject == did);
+      return this.credentials.filter(crd => crd.subject === did);
     } else {
       return this.credentials;
     }

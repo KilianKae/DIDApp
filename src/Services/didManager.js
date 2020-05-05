@@ -96,12 +96,20 @@ export default class DIDManager {
   }
 
   deleteEthrAccount(address) {
-    this.ethrDids = this.ethrDids.filter(ethrDid => ethrDid.address != address);
+    this.ethrDids = this.ethrDids.filter(
+      ethrDid => ethrDid.address !== address,
+    );
     deleteKeystore(address);
     this.publish();
   }
 
   getDids() {
     return this.ethrDids;
+  }
+
+  getEthrDid(did) {
+    const address = did.slice(9);
+    console.log(address, this.ethrDids);
+    return this.ethrDids.find(ethrDid => ethrDid.address === address);
   }
 }

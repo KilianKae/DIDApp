@@ -38,7 +38,7 @@ export default class Did extends Component {
           this.props.ethrDid.associatedService?.name === 'Institution A') ||
         (this.props.client_id ===
           'http://localhost:8080/institution/b/auth/siopResponse' &&
-          this.props.ethrDid.associatedService?.name === 'Institution A')
+          this.props.ethrDid.associatedService?.name === 'Institution B')
       ) {
         textStyle = this.styles.authenticationHighlight;
       }

@@ -28,7 +28,7 @@ export default class Credential extends Component {
 
   createHeader() {
     const title = this.props.credential.type.includes('CourseCredential')
-      ? 'Course'
+      ? 'Attendance Certification'
       : 'Credential';
     return (
       <CardItem header bordered style={this.styles.credentialColor}>
@@ -39,10 +39,21 @@ export default class Credential extends Component {
 
   createClaimsList() {
     //{claim.key}: {claim.value}
+    let valueName = '';
+    if (this.props.credential.type.includes('CourseCredential')) {
+      valueName = 'Course: ';
+    }
     let claims = [];
     console.log(this.props.credential);
     this.props.credential.claims.forEach((claim, i) => {
-      claims.push(<Text key={i}>{claim.value.id}</Text>);
+      claims.push(
+        <Text>
+          <Text key={i + '_name'}>{valueName}</Text>
+          <Text key={i + '_value'} style={this.styles.valueText}>
+            {claim.value.id}
+          </Text>
+        </Text>,
+      );
     });
     return claims;
   }
@@ -73,6 +84,9 @@ export default class Credential extends Component {
     credentialColor: {
       borderTopColor: stringToColour(this.props.credential.subject),
       borderTopWidth: 2,
+    },
+    valueText: {
+      fontWeight: 'bold',
     },
   });
 }
